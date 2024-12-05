@@ -1,3 +1,6 @@
 # university
-work and projects from uni
+
+A few asignments.
+
+It's missing tons of works I didn't save.
 
