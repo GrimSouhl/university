@@ -1,0 +1,79 @@
+v0 (17/03/2021): Comienzo y creación del repositorio github, con sus respectivos
+LICENSE y README.
+
+
+v0.1 (10/05/2021): Creación de la carpeta "Documentación" y subida de los diagramas
+de requisitos y casos de Uso.
+
+
+v0.2 (14/05/2021): Subida de las primeras clases y el prototipo de programación 
+realizada en Java.
+
+
+v0.3 (17/05/2021):
+	- Se incluye el logo del proyecto
+	- Primeros bocetos de la interfaz y las Gráficas
+	- Documentación actualizada
+		* Agregado el diagrama de clases
+	- Clases actualizadas
+		* Usuario
+		* Transaccion
+		* Historial 
+		* ProyectoAhorro
+		* LibreriaProyectoAhorro
+		* Monedero
+	- Incluido el nuevo paquete Base de Datos y sus respectiva clase
+
+
+v0.4 (19/05/2021):
+	- Clases actualizadas
+		* Grafico
+		* Noticias
+	- Mejoras en la GUI
+	- Mejoras en el Diagrama de Clases
+
+
+v0.5 (25/05/2021):
+	- Clases actualizadas
+	- Base de Datos actualizada
+	- Agregados los Diagramas de Secuencia
+	- Mejoras en el Diagrama de Clases
+	- Mejores en la interfaz
+	- Agregado Panfleto publicitario
+	
+
+v0.6 (27/05/2021):
+	- Clases actualizadas
+		* Graficas
+	- Primera version de la Base de Datos finalizada
+	- Agregados nuevos Diagramas de Secuencia
+	- Mejoras en el Diagrama de Clase
+	- Interfaz Actualizada
+		* Agregada Configuracion
+		* Agregado Cambio de Divisa
+		* Agregado Inicio de Sesión
+	
+v0.7 (31/05/2021):
+	- Clases actualizadas
+		* Graficas
+		* Noticias
+	- Mejoras en el Diagrama de Casos de Uso (versión 0.3)
+	- Interfaz Actualizada
+		* Agregado el funcionamiento de Noticias
+		* Agregado el URL
+
+v1.0 (06/06/2021):
+	Primera versión oficial para su uso por el cliente.
+	- Clases actualizadas
+		* Graficas
+	- Mejoras en el Diagrama de Clases
+	- Mejoras en los Diagramas de Secuencia
+	- Interfaz Actualizada
+		* Agregado el apartado de la Bolsa
+		* Agregado el funcionamiento del Proyecto Ahorro
+		* Agregado el funcionamiento del Monedero, Historial y Transacciones 
+		* Actualizado las opciones de configuración de Usuario
+
+v1.1 (07/06/2021):
+	Actualizaciones varias en la documentación
+
