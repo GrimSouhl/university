@@ -1,0 +1,23 @@
+import java_cup.runtime.*;
+
+
+terminal AC,CC,COMA;
+terminal Integer NUMERO;
+
+non terminal listaExp,linea;
+
+non terminal exp;
+
+listaExp::= linea listaExp| linea;
+
+linea ::= AC {: System.out.print("["); :} exp:e  CC {: System.out.println("]"); :}
+        |AC CC {: System.out.println("[NULL]"); :}
+;
+
+exp::= AC exp:e CC 
+    |AC exp:e CC COMA  {: System.out.print(","); :} exp
+    | NUMERO:a COMA {: System.out.print(a+","); :} exp
+    | NUMERO:a {: System.out.print(a);  :}
+    |AC CC {: System.out.print("NULL"); :}
+    |AC CC COMA {: System.out.print("NULL,"); :} exp
+;

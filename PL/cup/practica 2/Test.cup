@@ -1,0 +1,33 @@
+import java_cup.runtime.*;
+
+
+/*DUDA*/
+action code{: Integer anterior=0; Integer suma=0; :};
+
+terminal Integer NUMERO;
+
+non terminal listaExp,linea,resto;
+
+listaExp::= linea listaExp | linea;
+
+linea::= NUMERO:a NUMERO:b {: anterior=b; suma=a+b; :} resto
+
+        |NUMERO:a NUMERO:b {: if(b==2*a){
+                                        System.out.println("SI");
+                                }else{
+                                        System.out.println("NO");
+                                }
+                        :};
+
+resto::= NUMERO:a {: if(suma==a){
+                                suma=anterior+a; anterior=a; 
+                        }else{
+                                suma=-1;
+                        }
+                :} resto
+        |NUMERO:a {: if(suma==a){
+                                System.out.println("SI");
+                        }else{
+                                System.out.println("NO");
+                        }
+                :};

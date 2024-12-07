@@ -1,0 +1,23 @@
+import java_cup.runtime.*;
+
+terminal INT, DOUBLE, PYC;
+terminal String IDENT;
+
+
+non terminal mates,linea,exp,cosoint,cosodouble;
+
+/*gramatica: */
+
+mates ::= linea mates
+        |linea;
+
+linea ::= exp PYC 
+        |PYC;
+exp::= DOUBLE cosodouble
+       |INT cosoint;
+
+cosoint::= IDENT:a {: System.out.print(a+":int; ");:} cosoint
+        |  IDENT:a {: System.out.print(a+":int; \n");:};
+
+cosodouble::= IDENT:a {: System.out.print(a+":double; ");:} cosodouble
+        |  IDENT:a {: System.out.print(a+":double; \n");:};

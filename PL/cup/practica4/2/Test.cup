@@ -1,0 +1,29 @@
+import java_cup.runtime.*;
+
+action code{: String tipo= ""; :};
+
+terminal String INT,LONG,FLOAT,DOUBLE,CHAR,BOOLEAN,IDENT,PYC,COMA;
+
+non terminal listaEXp,linea,exp;
+non terminal String tipo;
+
+
+
+
+listaEXp::= linea listaEXp| linea;
+
+linea::= tipo:t {: tipo=t; :} exp PYC 
+;
+
+
+exp::= IDENT:id {: System.out.println(tipo+id+";"); :} COMA exp 
+     |IDENT:id {: System.out.println(tipo+id+";"); :}
+;
+
+tipo::= INT {: RESULT= "int "; :}
+        |LONG {: RESULT= "long "; :}
+        |FLOAT {: RESULT= "float "; :}
+        |DOUBLE {: RESULT= "double "; :}
+        |CHAR {: RESULT= "char "; :}
+        |BOOLEAN {: RESULT= "boolean "; :}
+;

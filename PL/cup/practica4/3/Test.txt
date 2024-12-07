@@ -1,0 +1,6 @@
+suma(2,2);
+suma(resta(7,4),multiplica(4,5));
+suma(suma(suma(suma(3,suma(4,5)),6),divide(8,4)),7);
+suma(2,2,2,2,2);
+suma(resta(7,4),multiplica(4,5,6));
+suma(suma(suma(suma(2,3,suma(4),6),7,8)));

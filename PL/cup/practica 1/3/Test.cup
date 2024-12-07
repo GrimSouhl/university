@@ -1,0 +1,29 @@
+import java_cup.runtime.*;
+
+terminal MAS,MENOS,POR,DIV,AP,CP;
+terminal String NUMERO,IDENT;
+
+non terminal listaExp,linea;
+non terminal String exp, valor;
+
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+
+/*GRAMATICA*/
+
+listaExp::= listaExp linea | linea;
+
+linea::= exp:e {: System.out.println(e); :};
+
+exp::=  exp:e1 MAS exp:e2 {: RESULT= e1+" "+e2+" + "; :}
+    |exp:e1 MENOS exp:e2 {: RESULT= e1+" "+e2+" - "; :}
+    |exp:e1 POR exp:e2 {: RESULT= e1+" "+e2+" * "; :}
+    |exp:e1 DIV exp:e2 {: RESULT= e1+" "+e2+" / "; :}
+    |AP exp:e CP {: RESULT= e; :}
+    |valor:v {:RESULT= v;:}
+;
+
+valor::= IDENT:a {:RESULT= a; :}
+    |NUMERO:a {:RESULT= a; :}
+;
+

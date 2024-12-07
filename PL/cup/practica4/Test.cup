@@ -1,0 +1,39 @@
+import java_cup.runtime.*;
+
+action code {: Integer x=0; :}
+
+terminal MAS,MENOS,ELEV,ASIG,PYC,X;
+terminal Integer NUMERO;
+
+non terminal listaExp,linea,ini;
+non terminal Integer exp,valor, numeros;
+
+precedence left MAS,MENOS;
+precedence right ELEV;
+
+listaExp::= linea listaExp | linea;
+
+linea::= ini PYC exp:s PYC{:System.out.println(s);:};
+
+ini::= X ASIG NUMERO:n {: x=n; :}
+       |X ASIG MENOS NUMERO:n {: x=-n; :};
+
+exp::= exp:e1 MAS exp:e2 {: RESULT= e1+e2; :}
+       |exp:e1 MENOS exp:e2 {: RESULT= e1-e2;  :}
+       |valor:v {: RESULT=v; :}
+       ;
+valor::= 
+        numeros:n X ELEV numeros:e2 {: RESULT= (int)Math.floor(n*Math.pow(x,e2));  :}
+       |X ELEV numeros:e2 {: RESULT= (int)Math.floor(Math.pow(x,e2));  :}
+       |MENOS X ELEV numeros:e2 {: RESULT= (int)Math.floor(Math.pow(x,e2));  :}
+       |X {: RESULT=x; :}
+       |MENOS X {: RESULT=-x; :}
+       |numeros:e X {: RESULT=e*x;  :}
+       |numeros:e  {: RESULT=e; :}
+       ;
+
+numeros::= NUMERO:n {:RESULT= n;:}
+        | MENOS NUMERO:n {:RESULT= -n;:}
+        ;
+
+

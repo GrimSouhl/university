@@ -1,0 +1,38 @@
+// Calculadora (version 2) 
+import java_cup.runtime.*;
+
+ /* Terminales */
+terminal            MAS, MENOS, POR, DIV, MENOSUNARIO;
+terminal            AP, CP;
+terminal            PYC;
+terminal            EOLN;
+terminal Integer    NUMERO;
+
+/* No terminales */
+non terminal         listaExp;
+non terminal         linea;
+non terminal Integer exp;
+
+/* Precedencia */
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+precedence nonassoc MENOSUNARIO;
+
+/* Gramatica */
+listaExp  ::= listaExp linea        {: Calculadora.debug("S->SL"); :}
+            | linea                 {: Calculadora.debug("S->L"); :}
+            ;
+linea      ::= exp:e EOLN           {: Calculadora.out.println(e); Calculadora.debug("L->E<eoln>"); :}
+            | exp:e PYC             {: Calculadora.out.println(e); Calculadora.debug("L->E;"); :}
+            | EOLN                  {:                             Calculadora.debug("L-><eoln>"); :}
+            ;
+exp       ::= exp:e1 MAS exp:e2     {: RESULT = e1+e2; Calculadora.debug("E->E+E"); :}
+            | exp:e1 MENOS exp:e2   {: RESULT = e1-e2; Calculadora.debug("E->E-E"); :}
+            | exp:e1 POR exp:e2     {: RESULT = e1*e2; Calculadora.debug("E->E*E"); :}
+            | exp:e1 DIV exp:e2     {: RESULT = e1/e2; Calculadora.debug("E->E/E"); :}
+            | MENOS exp:e1          {: RESULT = -e1;   Calculadora.debug("E->-E");  :}  %prec MENOSUNARIO
+            | AP exp:e1 CP          {: RESULT = e1;    Calculadora.debug("E->(E)"); :}
+            | NUMERO:n              {: RESULT = n;     Calculadora.debug("E->n");   :}
+            ;
+
+

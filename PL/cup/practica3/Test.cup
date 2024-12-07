@@ -1,0 +1,22 @@
+import java_cup.runtime.*;
+
+
+terminal MAS,MENOS,POR,DIV;
+terminal Integer NUMERO;
+
+non terminal listaExp, linea;
+non terminal Integer exp;
+
+precedence left MAS,MENOS;
+precedence left POR, DIV;
+
+
+listaExp::= linea listaExp | linea;
+
+linea::= exp:e {: System.out.println(e); :};
+
+exp::= MAS exp:a exp:b {: RESULT= a+b; :}
+      |MENOS exp:a exp:b {: RESULT= a-b; :}
+      |POR exp:a exp:b {: RESULT= a*b; :}
+      |DIV exp:a exp:b {: RESULT= a/b; :}
+      |NUMERO:a {: RESULT= a; :};

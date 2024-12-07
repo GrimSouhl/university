@@ -1,0 +1,96 @@
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+
+terminal ALL, CLL, AP, CP, AC, CC;
+terminal COMA, PYC, ASIG, MAS, MENOS, POR, DIV;
+terminal INVERSA, TRANSPUESTA, ADJUNTA, PRINT;
+terminal String IDENT;
+terminal Double NUMERO;
+
+non terminal lineaExp, linea;
+non terminal double[][] operacion;
+non terminal ArrayList<ArrayList<Double>> matriz;
+non terminal ArrayList<Double> filamatriz;
+
+precedence left MAS;
+precedence left POR;
+
+
+lineaExp ::= linea lineaExp | linea;
+
+linea ::= PRINT AP operacion:o CP PYC  {: Matrices.print(o);   :}
+        | IDENT:a ASIG operacion:o  PYC {: TablaSimbolos.insertar(a,o); :}
+;
+
+
+operacion ::=  ALL matriz:m CLL  {: try{ 
+                                        double[][] matriz = Matrices.toArray(m); 
+                                        RESULT= matriz;  
+                                    }catch(IndexOutOfBoundsException e){
+                                        System.out.println( Matrices.ERROR_FILAS );
+                                        System.exit(-1);
+                                    }
+                                :} 
+            |AC matriz:m CC   {: try{ 
+                                        double[][] matriz = Matrices.toArray(m); 
+                                        RESULT= matriz;  
+                                    }catch(IndexOutOfBoundsException e){
+                                        System.out.println( Matrices.ERROR_FILAS );
+                                        System.exit(-1);
+                                    }                               
+                                :}
+            |TRANSPUESTA AP operacion:o CP {: RESULT= Matrices.transpuesta(o);  :}
+            |INVERSA AP operacion:o CP {: 
+                                            if(Matrices.filas(o)==Matrices.columnas(o)){
+                                                    RESULT= Matrices.inversa(o);
+                                            }else{
+                                                System.out.println( Matrices.ERROR_INVERSA );
+                                                System.exit(-1);
+                                            }  
+                                        :}
+            |ADJUNTA AP operacion:o CP {:     
+                                            if(Matrices.filas(o)==Matrices.columnas(o)){
+                                                    RESULT= Matrices.adjunta(o);
+                                            }else{
+                                                System.out.println( Matrices.ERROR_ADJUNTA );
+                                                System.exit(-1);
+                                            }                         
+                                        :}
+            |operacion:o MAS operacion:b {:     
+                                            if(Matrices.filas(o)==Matrices.filas(b) && Matrices.columnas(o)==Matrices.columnas(b)){
+                                                    RESULT= Matrices.suma(o,b);
+                                            }else{
+                                                System.out.println( Matrices.ERROR_SUMA);
+                                                System.exit(-1);
+                                            }                         
+                                        :}
+            |operacion:o POR operacion:b {:     
+                                            if(Matrices.columnas(o)==Matrices.filas(b)){
+                                                    RESULT= Matrices.producto(o,b);
+                                            }else{
+                                                System.out.println( Matrices.ERROR_PROD );
+                                                System.exit(-1);
+                                            }                         
+                                        :}
+            |IDENT:id        {: 
+                                double[][] m = TablaSimbolos.buscar(id);
+                                if(m==null){
+                                    System.out.println(TablaSimbolos.ERROR_NOEXISTE);
+                                    System.exit(-1);
+                                }
+                                RESULT= m;
+                            :}
+            |AP operacion:o CP  {: RESULT=o;  :}
+;
+
+matriz ::=  filamatriz:f PYC matriz:m {: ArrayList<ArrayList<Double>> matriz = new ArrayList<>(); matriz.add(f); matriz.addAll(m); RESULT=  matriz;   :}
+        |ALL filamatriz:f CLL COMA matriz:m  {: ArrayList<ArrayList<Double>> matriz = new ArrayList<>(); matriz.add(f); matriz.addAll(m); RESULT=  matriz;   :}
+        |filamatriz:f     {: ArrayList<ArrayList<Double>> matriz = new ArrayList<>(); matriz.add(f); RESULT=  matriz;  :}
+        |ALL filamatriz:f CLL   {: ArrayList<ArrayList<Double>> matriz = new ArrayList<>(); matriz.add(f); RESULT=  matriz;  :}
+        
+        ;
+
+filamatriz ::= NUMERO:n COMA filamatriz:f  {: ArrayList<Double> fila = new ArrayList<>(); fila.add(n); fila.addAll(f); RESULT= fila; :}
+        | NUMERO:n          {: ArrayList<Double> fila = new ArrayList<>(); fila.add(n); RESULT= fila; :}
+;

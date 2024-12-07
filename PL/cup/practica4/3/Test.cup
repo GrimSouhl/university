@@ -1,0 +1,35 @@
+import java_cup.runtime.*;
+
+terminal String SUMA,RESTA,MULTIPLICA,DIVIDE,COMA,PYC,AP,CP;
+terminal Integer NUMERO;
+
+non terminal listaExp,linea;
+non terminal Integer operacion, exp, suma,multi;
+
+listaExp::= linea listaExp|linea;
+
+linea::= operacion:op PYC {: System.out.println(op); :};
+
+operacion::= SUMA AP suma:s CP {: RESULT=s; :}
+        |RESTA AP exp:e1 COMA exp:e2 CP {: RESULT=e1-e2; :}
+        |MULTIPLICA AP multi:m CP {: RESULT=m; :}
+        |DIVIDE AP exp:e1 COMA exp:e2 CP {: RESULT=e1/e2; :}
+;
+
+exp::= NUMERO:e1 {: RESULT= e1; :}
+       |operacion:o {: RESULT = o; :}
+;
+     
+
+
+suma::= operacion:o COMA suma:s {: RESULT= o+s; :}
+        |NUMERO:n COMA suma:s {: RESULT=n+s; :}
+        |operacion:o {: RESULT= o;:}
+        |NUMERO:n  {:RESULT=n;:}
+;
+
+multi::= operacion:o COMA multi:s {: RESULT= o*s; :}
+        |NUMERO:n COMA multi:s {: RESULT=n*s; :}
+        |operacion:o {: RESULT= o;:}
+        |NUMERO:n  {:RESULT=n;:}
+;

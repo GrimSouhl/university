@@ -1,0 +1,37 @@
+import java_cup.runtime.*;
+
+ /* Terminales */
+terminal            MAS, MENOS, POR, DIV, MENOSUNARIO;
+terminal            AP, CP;
+terminal            PYC;
+terminal            EOLN;
+terminal String    NUMERO;
+
+/* No terminales */
+non terminal         listaExp;
+non terminal         linea;
+non terminal String exp;
+
+/* Precedencia */
+precedence left MAS, MENOS;
+precedence left POR, DIV;
+precedence nonassoc MENOSUNARIO;
+
+/* Gramatica */
+listaExp      ::= listaExp linea      
+            | linea 
+            ;
+linea	  ::= exp:e EOLN            {: System.out.println(e); :}
+            | exp:e PYC             {: System.out.println(e); :}
+            | EOLN                 
+            ;
+exp       ::= exp:e1 MAS exp:e2     {: RESULT = e1 + " " + e2 + " +"; :}
+            | exp:e1 MENOS exp:e2   {: RESULT = e1 + " " + e2 + " -"; :}
+            | exp:e1 POR exp:e2     {: RESULT = e1 + " " + e2 + " *"; :}
+            | exp:e1 DIV exp:e2     {: RESULT = e1 + " " + e2 + " /"; :}
+            | MENOS exp:e1          {: RESULT = " 0 " + e1 + " -";  :}  %prec MENOSUNARIO
+            | AP exp:e1 CP          {: RESULT = e1;    :}
+            | NUMERO:n              {: RESULT = n;     :}
+            ;
+
+
