@@ -4,16 +4,21 @@ import java.io.*;
 
 parser code {:
 
-PLXC.out.println("error;");
-PLXC.out.println("halt;");
-done_parsing();
+  public void syntax_error(Symbol cur_token){;}
+
+  public void unrecovered_syntax_error(Symbol cur_token){
+    System.err.println("Syntax error. line: "+ PLXC.getLine() + "Column: "+ PLXC.lex.getClumn());
+    PLXC.out.println("# Syntax Error");
+    PLXC.out.println("error;");
+    PLXC.out.println("halt;");
+  }
 :}
 
 
 actions code {:
-TablaSimbolos tabla = new TablaSimbolos();
-int bloqueActual = 0;
-int var=0;
+  TablaSimbolos tabla = new TablaSimbolos();
+  int bloqueActual = 0;
+  int var=0;
 :}
 
 /*terminales*/
@@ -22,6 +27,9 @@ terminal A_LLAVE, C_LLAVE, PCOMA, AP, CP;
 terminal COMA, AC,CC;
 
 //palabras reservadas
+terminal IF, ELSE, WHILE, DO, FOR, PRINT, TO, DOWNTO, STEP;
+
+//tipos:
 terminal INT,FLOAT,CHAR;
 
 //valores
@@ -60,10 +68,12 @@ precedence left YLOG;
 precedence nonassoc ADMIR; //esto es el operador NOT , o sea la exclamacion
 precedence left IGUAL,DIFERENTE;
 precedence left MAYOR,MAYORIG, MENOR,MENORIG;
-precedence left MAS,MENOS,MULT,DIVID,PORCENT;
+precedence left MAS,MENOS;
+precedence left MULT,DIVID,PORCENT;
 precedence left MASMAS,MENOSMENOS;
-precedence nonassoc CAST; //abre y cierra parentesis, se usa tb para la connversion de tipos y para las operaciones--> ((int)b)+c
-//el profesor lo ha cambiado por un casting, para castear
+precedence left AP,CP;
+precedence nonassoc CAST; 
+//abre y cierra parentesis, se usa tb para la connversion de tipos y para las operaciones--> ((int)b)+c
 precedence nonassoc MENOSUNARIO;
 //los iguales se pueden encadenar
 
@@ -187,4 +197,3 @@ OperadorU ::= MENOSMENOS {:RESULT = Metodo.NEG;:}
             |MENOS      
             |ADMIR
             ;
-
