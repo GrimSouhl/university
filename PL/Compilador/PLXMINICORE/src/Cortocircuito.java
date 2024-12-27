@@ -1,9 +1,10 @@
 
-import jdk.dynalink.linker.MethodTypeConversionStrategy;
+public class Cortocircuito extends Instruccion{
 
-public class Cortocircuito {
+    private Instruccion e1, e2;
+    private String metodo;
     
-    public Cortocircuito (int linea, metodo, e1,e2 ){
+    public Cortocircuito (int linea, String metodo, Instruccion e1, Instruccion e2 ){
 
             super(linea);
             this.e1 = e1;
@@ -12,19 +13,20 @@ public class Cortocircuito {
     }
 
     @Override
-    public Objeto generarCodigo(){
+    public Objeto generarCodigo() throws Exception{
 
         Objeto o1 = e1.generarCodigo();
 
-        Etiqueta destino = new Etiqueta( Objeto.newEtiq(), o1.getBloque())
+        Etiqueta destino = new Etiqueta( Objeto.newObj(), o1.getBloque());
 
-        Objeto r = o1.generarCodigoMetodo( metodo,new Objeto[] {destino});
+        Objeto r = (Objeto) o1.generarCodigoMetodo( metodo,new Objeto[] {destino});
 
-        Objeto o2 = e2.generar.Codigo();
+        Objeto o2 = e2.generarCodigo();
 
-        r.generarCodigoMetodo(MethodTypeConversionStrategy.CONSTRUCTORCOPIA, new Objeto[]{o2}, );
+        r.generarCodigoMetodo(Metodo.CONSTRUCTORCOPIA, new Objeto[]{o2} );
 
-        destino.generarCodigoMetodo(Metodos.PONERETIQ,null,getLinea());
+        destino.generarCodigoMetodo(Metodo.PONERETIQ,null,getLinea());
+        
         return r;
     }
 

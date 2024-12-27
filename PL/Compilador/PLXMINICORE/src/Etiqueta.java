@@ -6,7 +6,7 @@ public class Etiqueta extends Objeto{
     private boolean puesta;
 
     public Etiqueta(String nombre, int bloque){
-        super(nombre,bloque, false);
+        super(nombre,bloque, false, bloque);
         puesta=false;
     }
 
@@ -15,18 +15,34 @@ public class Etiqueta extends Objeto{
         return getNombre();
     }
 
-    public OBjeto generarCodigoMetodo(String metodo, Objeto[]params, int ){
+    public Objeto generarCodigoMetodo(String metodo, Objeto[]params, int linea)throws ParseException{
         switch(metodo) {
             case Metodo.PONERETIQ:
                 if(puesta){
-                    throw new ParseException("lAS ETIQUETAS SOLO SE PUEDEN PONER");
+                    throw new ParseException("lAS ETIQUETAS SOLO SE PUEDEN PONER", linea);
                 }
                 puesta = true;
                 PLXC.out.println( getIDC()+":");
                 break;
             case Metodo.SALTARETIQ:
-                PLXC.out.println()Sent;
-        }
+                if (params == null || params.length == 0) {
+                    throw new ParseException("Etiqueta de salto no proporcionada.", linea);
+                }
+                PLXC.out.println("goto " + params[0].getIDC() + ";");  // Asume un salto simple
+                break;
+
+             default:
+                throw new ParseException("Metodo no reconocido: " + metodo, linea);
     }
-    
+        return null;
+    }
+
+    @Override
+    public Object generarCodigoMetodo(String metodo, Objeto[] param) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'generarCodigoMetodo'");
+    }
+        
 }
+    
+

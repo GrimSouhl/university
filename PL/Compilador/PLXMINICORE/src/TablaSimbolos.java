@@ -1,3 +1,4 @@
+import java.text.ParseException;
 import java.util.*;
 
 public class TablaSimbolos {
@@ -19,22 +20,21 @@ public class TablaSimbolos {
             subtabla.put(obj.getNombre(),obj);
         }
     }
-//busca el objeto por su nombre en cualquier bloque  ESTA MAL
-    public Objeto buscar(String nombre){
-        int mayor =0;
-        Objeto obj =null;
-        if(nombre ==null){
-            throw new IllegalArgumentException("El nombre del objeto no puede ser null");
-        }
-
-        for(var entry : tabla.entrySet()){
-            if(entry.getKey()>=mayor && entry.getValue().constainsKey(nombre)){
-                mayor = entry.getKey();
-                obj = entry.getValue().get(nombre);
-            }
-        }
-        return obj;
+//busca el objeto por su nombre en cualquier bloque
+public Objeto buscar(String nombre) {
+    if (nombre == null) {
+        throw new IllegalArgumentException("El nombre del objeto no puede ser null");
     }
+
+    for (int bloque = tabla.size(); bloque >= 0; bloque--) {
+        Map<String, Objeto> subtabla = tabla.get(bloque);
+        if (subtabla != null && subtabla.containsKey(nombre)) {
+            return subtabla.get(nombre); 
+        }
+    }
+    return null; //Si no se encuentra el objeto
+}
+
 //borra un objeto por su nombre y bloque
     public Objeto borrarObjeto(String nombre, int bloque){
         Map<String,Objeto> suTabla = tabla.get(bloque);

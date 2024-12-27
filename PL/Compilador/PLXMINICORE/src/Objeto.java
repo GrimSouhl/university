@@ -4,7 +4,7 @@ public abstract class Objeto implements Comparable<Objeto> {
     private String nombre;
     private int bloque;
     private boolean mutable;
-
+    private int linea;
     private static int numObj = 0;
 
     public static String newObj() {
@@ -14,12 +14,16 @@ public abstract class Objeto implements Comparable<Objeto> {
         return n;
     }
 
-    public Objeto(String nombre, int bloque, boolean mutable) {
+    public Objeto(String nombre, int bloque, boolean mutable, int linea) {
         this.nombre = nombre;
         this.bloque = bloque;
         this.mutable = mutable;
+        this.linea = linea;
     }
 
+    public int getLinea(){
+        return linea;
+    }
     public String getNombre() {
         return nombre;
     }

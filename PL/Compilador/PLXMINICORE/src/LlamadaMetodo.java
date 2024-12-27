@@ -21,13 +21,13 @@ public Objeto generarCodigo() throws Exception {
     Objeto o1 = e1.generarCodigo();
 
     if(param!=null){
-        oParam= new Objeto[Parameter.length];
+        oParam= new Objeto[param.length];
         for(int k=0; k<param.length;k++){
             oParam[k]=param[k].generarCodigo();
         }
     }
 
-    Objeto r = o1.generarCodigoMetodo(metodo, oParam, getLinea());
+    Objeto r = (Objeto) o1.generarCodigoMetodo(metodo, oParam);
     return r;
 }
 

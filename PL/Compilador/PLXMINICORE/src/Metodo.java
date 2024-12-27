@@ -27,11 +27,11 @@ public final class Metodo {
    public static final String CREAR_LITERAL = "$crear_literal";
    public static final String CREAR_VARIABLE = "$crear_variable";
    public static final String COPIAR_VARIABLE = "$copiar_variable";
-   
+   public static final String CONSTRUCTORCOPIA = "$constructorcopia";
    public static final String IMPRIMIR ="$print";
 
    public static final String PONERETIQ = "$ponerEtiq";
    public static final String SALTARETIQ = "$saltarEtiq";
 
-   //SUMA, RESTA, MULT,DIVI, OPUESTO,SIGUIENTE,ANTERIOR,MENOR,MENORIG,MAYOR,IG,IGUAL,DIFERENTE,YLOG,OLOG,NLOG,CAST,RESTO,CONSTRUCTOR,CONSTLITERAL 
+
 }
