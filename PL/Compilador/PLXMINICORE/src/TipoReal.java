@@ -33,7 +33,7 @@ public class TipoReal extends Tipo {
                 par = (Instancia) p;
 
                 if (par.getTipo() != this) {
-                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this}, getLinea());
+                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this});
                 }
 
                 PLXC.out.println(instancia.getIDC() + " = " + par.getIDC() + ";");
@@ -50,18 +50,18 @@ public class TipoReal extends Tipo {
 
                 switch (param[0].getNombre()) {
                     case Predefinidos.ENTERO:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println(v.getIDC() + " = (int) " + instancia.getIDC() + ";");
                         return v;
                     case Predefinidos.CARACTER:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println(v.getIDC() + " = (char) " + instancia.getIDC() + ";");
                         return v;
                     case Predefinidos.REAL:
                         return instancia;  // No hace falta hacer nada, ya es del tipo correcto.
-                    case Predefinidos.BOOL:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, TipoBool.instancia);
-                        et1 = newEtiq();
+                    case Predefinidos.BOOLEANO:
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, TipoBool.instancia);
+                        et1 = newEtiqueta();
                         PLXC.out.println(v.getIDC() + " = 1;");
                         PLXC.out.println("if (" + instancia.getIDC() + " != 0) goto " + et1 + ";");
                         PLXC.out.println(v.getIDC() + " = 0;");
@@ -135,7 +135,7 @@ public class TipoReal extends Tipo {
                     throw new ParseException("Incompatibilidad de tipos para la operación de comparación", getBloque());
                 }
 
-                String et2 = newEtiq();
+                String et2 = newEtiqueta();
                 switch (metodo) {
                     case Metodo.IGUAL:
                         PLXC.out.println("if (" + instancia.getIDC() + " == " + par.getIDC() + ") goto " + et2 + ";");

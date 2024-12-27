@@ -13,8 +13,8 @@ public class SentDOWHILE extends Instruccion {
     public Objeto generarCodigo() throws Exception {
         Objeto oCuerpo = cuerpo.generarCodigo();
         Objeto oCondicion = condicion.generarCodigo();
-        Etiqueta inicioCiclo = new Etiqueta(Objeto.newObj(), oCuerpo.getBloque());
-        Etiqueta finCiclo = new Etiqueta(Objeto.newObj(), oCuerpo.getBloque());
+        Etiqueta inicioCiclo = new Etiqueta(Objeto.newEtiqueta(), oCuerpo.getBloque());
+        Etiqueta finCiclo = new Etiqueta(Objeto.newEtiqueta(), oCuerpo.getBloque());
         
         PLXC.out.println(inicioCiclo.getIDC() + ":");
         oCuerpo.generarCodigoMetodo(Metodo.IMPRIMIR, new Objeto[] {oCuerpo});  // Este es un ejemplo de impresión, dependiendo de tu implementación

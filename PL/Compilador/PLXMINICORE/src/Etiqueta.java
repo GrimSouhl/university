@@ -6,7 +6,7 @@ public class Etiqueta extends Objeto{
     private boolean puesta;
 
     public Etiqueta(String nombre, int bloque){
-        super(nombre,bloque, false, bloque);
+        super(nombre,bloque, false);
         puesta=false;
     }
 

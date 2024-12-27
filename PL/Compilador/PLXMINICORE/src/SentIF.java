@@ -17,10 +17,10 @@ public class SentIF extends Instruccion {
         Objeto oCondicion = condicion.generarCodigo();
         
         Etiqueta etiquetaElse = null;
-        Etiqueta etiquetaFin = new Etiqueta(Objeto.newObj(), oCondicion.getBloque());
+        Etiqueta etiquetaFin = new Etiqueta(Objeto.newNombObj(), oCondicion.getBloque());
 
         if (cuerpoElse != null) {
-            etiquetaElse = new Etiqueta(Objeto.newObj(), oCondicion.getBloque());
+            etiquetaElse = new Etiqueta(Objeto.newNombObj(), oCondicion.getBloque());
         }
 
         PLXC.out.println("if (" + oCondicion.getIDC() + ") goto " + etiquetaFin.getIDC() + ";");

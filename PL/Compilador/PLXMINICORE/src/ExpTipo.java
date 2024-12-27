@@ -3,7 +3,7 @@ public class ExpTipo extends Objeto {
 
     // Constructor
     public ExpTipo(String nombre, int bloque, boolean mutable, Tipo tipo, int linea) {
-        super(nombre, bloque, mutable, linea);
+        super(nombre, bloque, mutable);
         this.tipo = tipo;
     }
 

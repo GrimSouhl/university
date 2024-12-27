@@ -33,13 +33,13 @@ public class TipoBool extends Tipo {
                 par = (Instancia) p;
 
                 if (par.getTipo() != this) {
-                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this}, getLinea());
+                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this});
                 }
 
                 PLXC.out.println(instancia.getIDC() + " = " + par.getIDC() + ";");
                 return param[0];
 
-            case Metodo.CONSTLITERAL:
+            case Metodo.CREAR_LITERAL:
                 PLXC.out.println(instancia.getIDC() + " = " + ((Literal) instancia).getValor() + ";");
                 return instancia;
 
@@ -50,15 +50,15 @@ public class TipoBool extends Tipo {
 
                 switch (param[0].getNombre()) {
                     case Predefinidos.ENTERO:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println(v.getIDC() + " = (" + Predefinidos.ENTERO + ") " + instancia.getIDC() + ";");
                         return v;
                     case Predefinidos.REAL:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println(v.getIDC() + " = (" + Predefinidos.REAL + ") " + instancia.getIDC() + ";");
                         return v;
                     case Predefinidos.CARACTER:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println(v.getIDC() + " = (" + Predefinidos.CARACTER + ") " + instancia.getIDC() + ";");
                         return v;
                     case Predefinidos.BOOLEANO:
@@ -93,7 +93,7 @@ public class TipoBool extends Tipo {
                     throw new ParseException("Incompatibilidad de tipos para la operación de comparación", getBloque());
                 }
 
-                String et2 = newEtiq();
+                String et2 = newEtiqueta();
                 switch (metodo) {
                     case Metodo.IGUAL:
                         PLXC.out.println("if (" + instancia.getIDC() + " == " + par.getIDC() + ") goto " + et2 + ";");

@@ -1,9 +1,12 @@
 public class Variable extends Instancia{
-    public Variable(String nombre, Tipo tipo, int bloque, boolean mutable){
-        super(nombre,tipo,bloque, mutable );
-    }
+    
+    
+    public Variable(String nombre, int bloque, boolean mutable, Tipo tipo) {
+		super(nombre,bloque,mutable, tipo);
+ 	}
 
-    public Objeto generarCodigoMetodo(String metodo, Objeto[] param, int linea){
-        return getTipo().generarCodigoInstancia(this, metodo, param,linea);
-    }
+     @Override
+ 	public Objeto generarCodigoMetodo(String metodo, Objeto[] param) throws Exception {
+	 	return getTipo().generarCodigoInstancia(this, metodo, param);
+	}
 }

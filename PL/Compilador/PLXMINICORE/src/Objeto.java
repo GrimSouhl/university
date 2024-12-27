@@ -6,20 +6,25 @@ public abstract class Objeto implements Comparable<Objeto> {
     private boolean mutable;
     private int linea;
     private static int numObj = 0;
+    private static int numEtq = 0;
 
-    public static String newObj() {
-        //fabrica de nombres o variables, como constates literales, $t0...
-        String n = new String("$t"+Integer.toString(numObj));
-        numObj++;
-        return n;
-    }
+    public static String newNombObj() {
+		String n = "$t" + numObj;
+		numObj++;
+		return n;
+	}
 
-    public Objeto(String nombre, int bloque, boolean mutable, int linea) {
-        this.nombre = nombre;
-        this.bloque = bloque;
-        this.mutable = mutable;
-        this.linea = linea;
-    }
+	public static String newEtiqueta() {
+		String etq = "L" + numEtq;
+		numEtq++;
+		return etq;
+	}
+
+    public Objeto (String nombre, int bloque, boolean mutable) {
+		this.nombre = nombre;
+		this.bloque = bloque;
+		this.mutable = mutable;
+	}
 
     public int getLinea(){
         return linea;
@@ -38,30 +43,22 @@ public abstract class Objeto implements Comparable<Objeto> {
 //cada objeto de mi programa tiene un identificador de codigo, o sea puede haber variables con el mismo nombre, 
 //para que no se pisen le damos un numero de bloque, o sea es como una ID
     public String getIDC() {
-        return nombre+"$"+Integer.toString(bloque);
-    }
+		return nombre+"$"+Integer.toString(bloque);
+	}
 
 //esto llama al metodo tipo int para que escriba la suma , la resta o lo que sea
     public abstract Object generarCodigoMetodo(String metodo, Objeto[] param) throws Exception;
 
     @Override
-    public int compareTo(Objeto o) {
-        if(o==null){
-            throw new NullPointerException("El objeto comparado no puede ser null");
+    public int compareTo(Objeto obj) {
+        if(obj == null) {
+            throw new NullPointerException("El objeto con el que se intenta comparar es nulo");
         }
-        //comparar por bloques
-        int bloqueComparison = Integer.compare(this.bloque,o.bloque);
-        if(bloqueComparison !=0){
-            return bloqueComparison;
-        }
-        //si los bloques son iguales,  comparar por nombre
-        if(this.nombre ==null && o.nombre !=null){
-            return -1;
-        }
-        if(this.nombre !=null && o.nombre ==null){
-            return 1;
-        }
-        return this.nombre.compareTo(o.nombre);
 
+        if(this.bloque == obj.bloque) {
+            return this.nombre.compareTo(obj.nombre);
+        } else {
+            return this.bloque - obj.bloque;
+        }
     }
 }

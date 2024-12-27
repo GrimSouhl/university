@@ -13,8 +13,8 @@ public class SentWHILE extends Instruccion {
     public Objeto generarCodigo() throws Exception {
 
         Objeto oCondicion = condicion.generarCodigo();
-        Etiqueta etiquetaInicio = new Etiqueta(Objeto.newObj(), oCondicion.getBloque());
-        Etiqueta etiquetaFin = new Etiqueta(Objeto.newObj(), oCondicion.getBloque());
+        Etiqueta etiquetaInicio = new Etiqueta(Objeto.newEtiqueta(), oCondicion.getBloque());
+        Etiqueta etiquetaFin = new Etiqueta(Objeto.newEtiqueta(), oCondicion.getBloque());
 
         PLXC.out.println(etiquetaInicio.getIDC() + ":");
         PLXC.out.println("if (" + oCondicion.getIDC() + ") goto " + etiquetaFin.getIDC() + ";");

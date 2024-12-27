@@ -29,7 +29,7 @@ public class TipoInt extends Tipo{
                 par = (Instancia) p;
 
                 if(par.getTipo()!= this) {
-                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this},getLinea());
+                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this});
                 }
 
                PLXC.out.println( instancia.getIDC() + " = "+ par.getIDC()+ ";");
@@ -45,16 +45,16 @@ public class TipoInt extends Tipo{
                     case Predefinidos.ENTERO:
                         return instancia;
                     case Predefinidos.CARACTER:
-                        v = new Variable( newNomObj(), instancia.getBloque(),false, (Tipo) param[0]);
+                        v = new Variable( newNombObj(), instancia.getBloque(),false, (Tipo) param[0]);
                         PLXC.out.println( v.getIDC() + " = " + instancia.getIDC());
                         return v;
                     case Predefinidos.REAL:
-                        v = new Variable( newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable( newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println( v.getIDC() + " = (float) " + instancia.getIDC());
                         return v;
                     case Predefinidos.BOOLEANO:
-                        v = new Variable( newNomObj(), instancia.getBloque(),false, TipoBool);
-                        et1 = newEtiq();
+                        v = new Variable( newNombObj(), instancia.getBloque(),false, TipoBool);
+                        et1 = newEtiqueta();
                         PLXC.out.println( v.getIDC() + " = 1;");
                         PLXC.out.println( "if ("+ instancia.getIDC()+" != 0) goto "+et1+";");
                         PLXC.out.println(v.getIDC()+" = 0;");
@@ -114,7 +114,7 @@ public class TipoInt extends Tipo{
                 }
 
                 // Generar código de comparación
-                    String et2 = newEtiq();
+                    String et2 = newEtiqueta();
                 switch (metodo) {
                     case Metodo.IGUAL:
                         PLXC.out.println("if (" + instancia.getIDC() + " == " + par.getIDC() + ") goto " + et2 + ";");

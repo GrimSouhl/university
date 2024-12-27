@@ -3,14 +3,11 @@ import java.util.Vector;
 public abstract class Instancia extends Objeto{
     private final Tipo tipo;
 
-    public Instancia(String nombre, Tipo tipo, int bloque, boolean mutable, int linea) {
-        super(nombre, bloque, mutable, linea);  // Llamamos al constructor de la clase base Objeto
-        this.tipo = tipo;
-    }
-    public Tipo getTipo() {
-        return tipo;
-    }
+    public Instancia (String nombre, int bloque, boolean mutable, Tipo tipo) {
 
-    public abstract Object generarCodigo() throws Exception;
+		super(nombre, bloque, mutable);
+		this.tipo = tipo;
+	}
+
+	public Tipo getTipo() { return this.tipo; }
 }
-

@@ -24,8 +24,8 @@ public class SentFOR extends Instruccion {
   
         Objeto oCuerpo = cuerpo.generarCodigo();
         
-        Etiqueta inicioCiclo = new Etiqueta(Objeto.newObj(), oCuerpo.getBloque());
-        Etiqueta finCiclo = new Etiqueta(Objeto.newObj(), oCuerpo.getBloque());
+        Etiqueta inicioCiclo = new Etiqueta(Objeto.newEtiqueta(), oCuerpo.getBloque());
+        Etiqueta finCiclo = new Etiqueta(Objeto.newEtiqueta(), oCuerpo.getBloque());
 
         PLXC.out.println(inicioCiclo.getIDC() + ":");
         
