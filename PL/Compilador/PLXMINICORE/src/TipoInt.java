@@ -3,8 +3,6 @@ import java.text.ParseException;
 
 public class TipoInt extends Tipo{
     public static final TipoInt instancia = new TipoInt();
-    //el construtor es privado para que no se pueda instanciar, y no se cambia
-    //solo loo creas una vez, no puede haber dos objetods representando el mismo tipo
     private TipoInt() {
         super(Predefinidos.ENTERO,0,false);
     }

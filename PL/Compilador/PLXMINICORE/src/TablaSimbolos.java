@@ -77,4 +77,3 @@ public String toString(){
 
 }
 
-//añadir una nueva variable a la tabla    añadirObjeto

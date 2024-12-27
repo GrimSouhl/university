@@ -54,4 +54,9 @@ public class PLXC {
             System.err.println("Error al leer el archivo: " + e.getMessage());
         }
     }
+
+    public Throwable getLine() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getLine'");
+    }
 }
