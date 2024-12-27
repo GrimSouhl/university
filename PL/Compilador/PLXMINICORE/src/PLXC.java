@@ -3,7 +3,7 @@ import java.io.PrintStream;
 public class PLXC {
 
     // Instancia del lexer (análisis léxico)
-    public static Lexico lex;
+    public static PLXC lex;
 
     // Tabla de símbolos donde se guardan las variables, funciones, etc.
     public static TablaSimbolos ts;
