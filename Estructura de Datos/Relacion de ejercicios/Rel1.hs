@@ -340,6 +340,13 @@ p2_inversas x
 --raíces 1 (-2) 1.0  (1.0,1.0)
 --raíces 1.0 2 4  Exception: Raíces no reales
 
+raices :: Float -> Float-> Float -> (Float,Float)
+raices x y z 
+            |discriminante > 0 = (r1,r2)
+            where
+                discriminante = y^2 - 4 * x * z
+                r1 = (-y + sqrt discriminante) / (2*x)
+                r2 = (-y - sqrt discriminante) / (2*x)
 
 
 
@@ -360,17 +367,30 @@ p2_inversas x
 --Main> quickCheck p2_raíces
 -- OK, passed 100 tests
 
+p1_raíces :: Float -> Float -> Float -> Bool
+p1_raíces a b c = esRaíz r1 && esRaíz r2
+    where
+        (r1, r2) = raices a b c
+        esRaíz r = abs (a*r^2 + b*r + c) < 1e-6
 
-
-
-
+-- Mejora de la propiedad con condiciones adicionales para evitar errores
+p2_raíces :: Float -> Float -> Float -> Property
+p2_raíces a b c = a /= 0 && discriminante >= 0 ==> esRaíz r1 && esRaíz r2
+    where
+        discriminante = b^2 - 4 * a * c
+        (r1, r2) = raices a b c
+        esRaíz r = abs (a*r^2 + b*r + c) < 1e-6
 
 -----------------------------------------------------------------------------------------------------
 --11. Define una función esMúltiplo sobrecargada para tipos integrales que tome dos valores x e y, y
 --devuelva True si x es múltiplo de y. Por ejemplo:
 --esMúltiplo 9 3  True esMúltiplo 7 3  False
 
-
+esMultiplo :: Integer -> Integer -> Bool
+esMultiplo x y 
+            |x==0 || y == 0 = False
+            |x `mod` y==0 || y `mod` x==0 = True
+            |otherwise= False
 
 -----------------------------------------------------------------------------------------------------
 --12. Define el operador de implicación lógica (==>>) :: Bool -> Bool -> Bool de forma que sea
@@ -383,6 +403,16 @@ p2_inversas x
 --completando definiciones tales como:
 --False ==>> y = True    |  ??? ==>> ??? = ???
 
+infixl 2 ==>>
+--infix: Define que el operador se puede usar entre dos argumentos (como + o ==).
+--l: Significa asociatividad a la izquierda (left). Es decir, en una cadena de operadores, se agruparán de izquierda a derecha.
+--Ejemplo: a ==>> b ==>> c se evalúa como (a ==>> b) ==>> c.
+--Número (Precedencia): Controla qué tan pronto se evalúa el operador en comparación con otros operadores.
+--Los valores van de 0 a 9 (0 = más baja precedencia, 9 = más alta).
+(==>>) :: Bool -> Bool -> Bool
+False ==>> _ = True
+True ==>> y = y
+
 -----------------------------------------------------------------------------------------------------
 --13. Los años bisiestos son los años múltiplos de 4. Una excepción a esta regla son los años múltiplos de
 --100, que sólo se consideran bisiestos si además son múltiplos de 400. Define una función
@@ -393,30 +423,52 @@ p2_inversas x
 --condiciones siguientes: (a) es múltiplo de 4, y (b) si n es múltiplo de 100 entonces n es múltiplo de
 --400”.
 
+esBisiesto :: Int -> Bool
+esBisiesto n = (n `mod` 4 == 0) && (n `mod` 100 == 0 ==>> n `mod` 400 == 0)
 
+--esBisiesto :: Integer -> Bool
+--esBisiesto x 
+--            | x==0 = False
+--            | x `mod` 100 == 0 && x `mod` 400 == 0 = True
+--            | x `mod` 100 /= 0 && x `mod` 4 ==0 = True
+--            |otherwise= False
 
 
 -----------------------------------------------------------------------------------------------------
 --14. Aunque ya existe en Haskell el operador predefinido (^) para calcular potencias, el objetivo de este
 ---problema es que definas tus propias versiones recursivas de este operador.
+
+
 --a) A partir de la propiedad bn = b bn-1 define una función recursiva potencia que tome un entero b
 --y un exponente natural n y devuelva bn. Por ejemplo:
 --potencia 2 3  8
+
+potencia :: Integer -> Integer -> Integer
+potencia b 1 = b
+potencia b n = b * ( potencia b (n-1) )
+
+
 --b) A partir de la siguiente propiedad:
 --define (sin usar la función del apartado anterior) una función recursiva potencia' que tome un
 --entero b y un exponente natural n y devuelva bn. Por ejemplo:
 --potencia' 2 3  8 potencia' 2 4  16
+
+potencia' :: Integer -> Integer -> Integer
+potencia' _ 0 = 1
+potencia' b n                
+  | n `mod` 2 == 0 = let mitad = potencia' b (n `div` 2)  --divido potencia en dos y multiplico
+                     in mitad * mitad
+  | otherwise = b * potencia' b (n - 1)  -- calculo potencia
+
+
 --c) Comprueba con QuickCheck la corrección de ambas funciones mediante la siguiente propiedad:
 --p_pot b n = n>=0 ==> potencia b n == sol
 -- && potencia' b n == sol
 -- where sol = b^n
---d) Teniendo en cuenta que elevar al cuadrado equivale a realizar un producto, determina el número
---de productos que realizan ambas funciones para elevar cierta base a un exponente n.
---Ayuda: para analizar la eficiencia de potencia' considera exponentes que sean potencia de 2.
 
-
-
-
+p_pot :: Integer -> Integer -> Property
+p_pot b n = n>=0 ==> potencia b n == sol && potencia' b n == sol
+            where sol = b^n
 
 
 -----------------------------------------------------------------------------------------------------
@@ -430,7 +482,9 @@ p2_inversas x
 --decir, factorial :: Integer -> Integer. Por ejemplo:
 --factorial 3  6 factorial 20  2432902008176640000
 
-
+factorial :: Integer -> Integer
+factorial 0 = 1
+factorial x = x* factorial (x-1)
 
 
 -----------------------------------------------------------------------------------------------------
@@ -438,11 +492,22 @@ p2_inversas x
 --a) Define una función divideA que compruebe si su primer argumento divide exactamente al
 --segundo. Por ejemplo:
 --2 `divideA` 10  True 4 `divideA` 10  False
+
+divideA :: Integer -> Integer -> Bool
+divideA 0 y = False
+divideA x y = y `mod` x == 0
+
 --b) Lee, entiende y comprueba con QuickCheck la siguiente propiedad referente a la función divideA:
 --p1_divideA x y = y/=0 && y `divideA` x ==> div x y * y == x
+
+p1_divideA x y = y/=0 && y `divideA` x ==> div x y * y == x
+--OK, passed 100 tests; 960 discarded
+
 --c) Escribe una propiedad p2_divideA para comprobar usando QuickCheck que si un número divide a
 --otros dos, también divide a la suma de ambos. 
 
+p2_divideA x y z = z/=0 && z `divideA` x ==> div x z * z == x && z/=0 && z `divideA` y ==> div y z * z == y 
+                    && z/=0 && z `divideA` (x+y) ==> div (x+y) z * z == (x+y)
 
 
 -----------------------------------------------------------------------------------------------------
@@ -456,3 +521,12 @@ p2_inversas x
 --mediana (x,y,z,t,u)
 -- | x > z = mediana (z,y,x,t,u)
 -- | y > z = mediana (x,z,y,t,u)
+
+mediana :: Ord a => (a, a, a, a, a) -> a
+mediana (x, y, z, t, u)
+  | x > y     = mediana (y, x, z, t, u) 
+  | y > z     = mediana (x, z, y, t, u)  
+  | z > t     = mediana (x, y, t, z, u)
+  | t > u     = mediana (x, y, z, u, t)
+  |otherwise = z
+
