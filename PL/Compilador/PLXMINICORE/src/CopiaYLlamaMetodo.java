@@ -3,6 +3,13 @@ public class CopiaYLlamaMetodo extends Instruccion{
     private Instruccion e1, param[];
     private String metodo;
 
+    public CopiaYLlamaMetodo(int linea, Instruccion e1,  String metodo, Instruccion[] param) {
+		super(linea);
+		this.e1=e1;
+		this.metodo=metodo;
+		this.param=param;
+	}
+    
     @Override
     public Objeto generarCodigo() throws Exception {
         Objeto oParam[] = null;
@@ -21,7 +28,7 @@ public class CopiaYLlamaMetodo extends Instruccion{
             }
         }
 
-        r.generarCodigoMetodo(metodo,oParam)
+        r.generarCodigoMetodo(metodo,oParam);
 
             return r;
     }

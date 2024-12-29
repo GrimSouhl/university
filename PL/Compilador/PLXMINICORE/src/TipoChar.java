@@ -50,16 +50,16 @@ public class TipoChar extends Tipo {
 
                 switch (param[0].getNombre()) {
                     case Predefinidos.ENTERO:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println(v.getIDC() + " = (int) " + instancia.getIDC() + ";");
                         return v;
                     case Predefinidos.REAL:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, (Tipo) param[0]);
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, (Tipo) param[0]);
                         PLXC.out.println(v.getIDC() + " = (float) " + instancia.getIDC() + ";");
                         return v;
-                    case Predefinidos.BOOL:
-                        v = new Variable(newNomObj(), instancia.getBloque(), false, TipoBool.instancia);
-                        et1 = newEtiq();
+                    case Predefinidos.BOOLEANO:
+                        v = new Variable(newNombObj(), instancia.getBloque(), false, TipoBool.instancia);
+                        et1 = newEtiqueta();
                         PLXC.out.println(v.getIDC() + " = 1;");
                         PLXC.out.println("if (" + instancia.getIDC() + " != 0) goto " + et1 + ";");
                         PLXC.out.println(v.getIDC() + " = 0;");
@@ -137,7 +137,7 @@ public class TipoChar extends Tipo {
                     throw new ParseException("Incompatibilidad de tipos para la operación de comparación", getBloque());
                 }
 
-                String et2 = newEtiq();
+                String et2 = newEtiqueta();
                 switch (metodo) {
                     case Metodo.IGUAL:
                         PLXC.out.println("if (" + instancia.getIDC() + " == " + par.getIDC() + ") goto " + et2 + ";");

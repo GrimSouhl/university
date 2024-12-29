@@ -17,7 +17,7 @@ public class SentDOWHILE extends Instruccion {
         Etiqueta finCiclo = new Etiqueta(Objeto.newEtiqueta(), oCuerpo.getBloque());
         
         PLXC.out.println(inicioCiclo.getIDC() + ":");
-        oCuerpo.generarCodigoMetodo(Metodo.IMPRIMIR, new Objeto[] {oCuerpo});  // Este es un ejemplo de impresión, dependiendo de tu implementación
+        oCuerpo.generarCodigoMetodo(Metodo.IMPRIMIR, new Objeto[] {oCuerpo});  
 
         PLXC.out.println("if (" + oCondicion.getIDC() + ") goto " + inicioCiclo.getIDC() + ";");
         PLXC.out.println(finCiclo.getIDC() + ":");

@@ -9,9 +9,10 @@ public abstract class Instancia extends Objeto{
 		this.tipo = tipo;
 	}
 
-	public Instancia(String nombre, Tipo tipo2, int bloque, boolean mutable, int linea) {
-        //TODO Auto-generated constructor stub
-    }
 
     public Tipo getTipo() { return this.tipo; }
+
+    public Objeto generarCodigoMetodo(String metodo,Objeto[] param,int linea) throws Exception{
+		return null;
+	}
 }

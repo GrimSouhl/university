@@ -53,7 +53,7 @@ public class TipoInt extends Tipo{
                         PLXC.out.println( v.getIDC() + " = (float) " + instancia.getIDC());
                         return v;
                     case Predefinidos.BOOLEANO:
-                        v = new Variable( newNombObj(), instancia.getBloque(),false, TipoBool);
+                        v = new Variable( newNombObj(), instancia.getBloque(),false, TipoBool.instancia);
                         et1 = newEtiqueta();
                         PLXC.out.println( v.getIDC() + " = 1;");
                         PLXC.out.println( "if ("+ instancia.getIDC()+" != 0) goto "+et1+";");

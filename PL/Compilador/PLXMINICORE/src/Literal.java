@@ -4,7 +4,7 @@ public class Literal extends Instancia{
 
     private final String valor;
     public Literal( int bloque, Tipo tipo, Object valor) {
-        super(Objeto.newObj(), tipo, bloque, false, bloque);
+        super(Objeto.newNombObj().toString(), bloque, false,tipo);
         this.valor = (String) valor;
     }
     public Object getValor(){
