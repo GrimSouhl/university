@@ -1,0 +1,27 @@
+{
+    "recommendations": [
+        "justusadam.language-haskell"
+    ]
+    "editor.tokenColorCustomizations": {
+    "textMateRules": [
+        {
+            "scope": [
+                "source.haskell",
+                "keyword.control.haskell"
+            ],
+            "settings": {
+                "foreground": "#FF6347"  // Colorea las palabras clave en color rojo tomate
+            }
+        },
+        {
+            "scope": [
+                "source.haskell",
+                "variable.other.haskell"
+            ],
+            "settings": {
+                "foreground": "#4682B4"  // Colorea las variables en color azul acero
+            }
+        }
+    ]
+}
+}
