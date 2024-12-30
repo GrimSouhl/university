@@ -273,3 +273,113 @@ esPerfecto n = n == sum (divisoress n)
 
 perfectosMenoresQue :: Int -> [Int]
 perfectosMenoresQue n = [ x | x <- [1..n], esPerfecto x]
+
+--------------------------------------------------------------------------------------------------------
+--11. La función predefinida toma un número natural y una lista , y devuelve una lista con los
+--primeros elementos de .
+--a) Dado que no es posible volver a definir una función predefinida, completa la siguiente definición
+--para que la función se comporte como la función predefinida :
+
+--take' :: Int -> [a] -> [a]
+--take' 0 _ = []
+--take' _ [] = []
+--take' n (x:xs)= x: take' (n-1) xs
+
+take' :: Int -> [a] -> [a]
+take' n xs = [ x | (p,x) <- zip[0..n-1] xs]
+
+--b) La función predefinida toma un número natural y una lista , y devuelve la lista que se
+--obtiene al eliminar los primeros elementos de . Completa la siguiente definición
+--para que la función se comporte como la función predefinida :
+--Escribe y comprueba con QuickCheck la siguiente propiedad: para cualquier ≥0 y cualquier lista ,
+--si concatenamos la lista con la lista , obtenemos la lista original .
+
+--drop' :: Int -> [a] -> [a]
+--drop' 0 xs = xs
+--drop' _ [] = []
+--drop' n (x:xs) = drop' (n-1) xs
+
+drop' :: Int -> [a] -> [a]
+drop' n xs = [x | (p,x)<- zip[1..length xs] xs, p>n]
+
+
+
+--------------------------------------------------------------------------------------------------------
+--12. La función predefinida
+--toma una lista de listas y devuelve la lista que se obtiene al concatenar todos sus elementos:
+--Dado que no es posible volver a definir una función predefinida, define usando foldr una función
+--que se comporte como la predefinida.
+--Ayuda: observa que el resultado se puede calcular con la siguiente expresión:
+--donde el operador predefinido concatena dos listas.
+
+concat' :: [[a]] -> [a]
+concat'  = foldr (++) []
+
+
+
+--b) Da ahora una definición alternativa usando listas por comprensión. Usa para ello dos
+--generadores; el primero extraerá cada lista de la lista de listas argumento; el segundo extraerá los
+--elementos de las listas extraídas por el primer generador.
+
+concat'' :: [[a]] -> [a]
+concat'' xss = [x | xs <- xss, x <- xs]
+
+
+--------------------------------------------------------------------------------------------------------
+--13. Las funciones predefinidas and ,tail  y zip han sido explicadas en el tema 2. Analiza y entiende
+--qué hace la siguiente función:
+
+desconocida :: (Ord a) => [a] -> Bool
+desconocida xs = and [x <= y | (x,y) <- zip xs (tail xs)]
+--comprueba si todos sus elementos estan ordenados de forma creciente
+
+
+
+
+--------------------------------------------------------------------------------------------------------
+--14. La función predefinida takeWhile :: (a -> Bool) -> [a] -> [a] 
+--devuelve el prefijo más largo con los elementos de una lista (2º argumento) que cumplen una
+--condición (1er argumento). Por ejemplo:
+--ya que el 11 es el primer elemento que no es par. Otro ejemplo de uso es:
+--ya que 6 es el primer elemento de la lista mayor o igual a 5. Para los mismos argumentos, la función
+--suprime el prefijo que devuelve. Por ejemplo:
+--a) Usando estas funciones, define una función que tome un elemento x y una lista xs que ya
+--está ordenada ascendentemente (asume que esta precondición se cumple), y que devuelva la lista
+--ordenada que se obtiene al insertar x en su posición adecuada dentro de xs. Por ejemplo:
+
+inserta :: Ord a => a -> [a] -> [a]
+inserta x xs = takeWhile (<x) xs ++[x] ++ dropWhile (<x) xs
+
+--a)Sin usar ninguna función auxiliar, define directamente y en forma recursiva la función
+
+inserta' :: Ord a => a -> [a] -> [a]
+inserta' x [] = [x]
+inserta' x (y:ys)
+                |x<y = x:y:ys
+                |otherwise = y : inserta' x ys
+
+
+--c) Lee, entiende y comprueba con QuickCheck la siguiente propiedad referente a la función :
+
+p1_inserta x xs = desconocida xs ==> desconocida ( inserta x xs)
+--OK, passed 100 tests; 0 discarded.
+
+--d) Podemos utilizar la función que hemos definido para ordenar ascendentemente una lista
+---desordenada. Por ejemplo, si quisiéramos ordenar la lista , podríamos hacerlo evaluando
+--la expresión:
+--Razona por qué funciona este algoritmo para ordenar una lista.
+
+--porque va insertando los elementos en la lista de forma ordenada y la lista resultante es la lista ordenada
+
+--e) Usando la función foldr y la función inserta , define una función ordena que tome una lista de
+--valores y la devuelva ordenada. Por ejemplo:
+
+ordena :: Ord a => [a] -> [a]
+ordena xs = foldr inserta [] xs
+--la funcion inserta coloca el valor que le oasamos en su posicion ordenada, si vamos metiendolos todos uno por uno los colocamos ordenados.
+
+--f)Define y comprueba con QuickCheck la siguiente propiedad:
+-- para cualquier lista xs, ordena xs es una lista ordenada.
+
+p_ordena xs = desconocida (ordena xs)
+--OK, passed 100 tests; 0 discarded.
