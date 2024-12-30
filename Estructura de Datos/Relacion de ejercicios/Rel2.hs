@@ -64,15 +64,27 @@ maximoYrestoOrd xs = (maximum xs , sort(delete (maximum xs) xs))
 --sublistas, asignando los elementos en forma alternada a cada una de las listas y en el mismo orden
 --que el original
 
-
+repartir :: [a] -> [a] -> [a] -> ([a], [a])
+repartir [] l1 l2 = (l1, l2)  
+repartir (x:xs) l1 l2 = switchrepartir xs (l1++[x]) l2
+  where
+    switchrepartir [] l1 l2 = (l1, l2) 
+    switchrepartir (y:ys) l1 l2 = repartir ys l1 (l2++[y])  
+    
 --------------------------------------------------------------------------------------------------------
 --4. Define una función , que compruebe si todos los elementos
 --de la lista argumento son distintos. Por ejemplo:
 
-
-
-
-
+distintos :: Eq a => [a] -> Bool
+distintos [] = True
+distintos (x:xs)
+            | duplicados x xs = False
+            |otherwise = distintos xs
+            where
+                duplicados _ []=False
+                duplicados y (z:zs) 
+                                | y==z = True
+                                | otherwise = duplicados y zs
 
 
 --------------------------------------------------------------------------------------------------------
@@ -82,16 +94,25 @@ maximoYrestoOrd xs = (maximum xs , sort(delete (maximum xs) xs))
 ---a) Dado que no es posible volver a definir una función predefinida, define usando listas por
 --comprensión una función que se comporte como la función predefinida:
 
-
+--replicate' :: Int -> a -> [a]
+--replicate' 0 x = [ ]
+--replicate' n x = listarep (n-1) x [x]
+--            where 
+--                listarep 0 y l1 = l1
+--                listarep rep y l1 = listarep (rep-1) y (l1++[y])
+replicate' :: Int -> a -> [a]
+replicate' n x = [x|_ <- [1..n]]
 
 --b) Lee y entiende la siguiente propiedad referente a la función :
 
+p_replicate' n x = n >=0 && n<= 1000 ==> length (filter (==x) xs ) == n && length (filter (/=x) xs) ==0
+                where xs = replicate' n x
 
 
 --c) Comprueba esta propiedad usando QuickCheck (recuerda importar al principio
 --de tu programa).
 
-
+--OK, passed 100 tests; 102 discarded.
 
 
 
@@ -101,16 +122,19 @@ maximoYrestoOrd xs = (maximum xs , sort(delete (maximum xs) xs))
 --otro, define una función que devuelva la lista de divisores naturales de un número
 --natural. Por ejemplo:
 
+divideA :: Int -> Int -> Bool
+divideA n x 
+        | (x/=0 )&& ((n `mod` x)== 0) = True
+        |otherwise = False
 
+divisores ::  Int -> [Int]
+divisores n = [x| x <- [1..n], divideA n x ]
 
 --Haz las modificaciones necesarias para obtener una nueva función que devuelva los
 --divisores (positivos y negativos) de un número entero:
 
-
-
-
-
-
+divisores' ::  Int -> [Int]
+divisores' n = [x| x <- [-n..n], divideA n x ]
 
 
 --------------------------------------------------------------------------------------------------------
