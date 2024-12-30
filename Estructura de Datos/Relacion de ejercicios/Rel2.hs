@@ -221,28 +221,40 @@ p1_primos x = primosHasta x == primosHasta' x
 --(observa que los pares no aparecen duplicados: por ejemplo, el par (29,11) no aparece en la lista
 --anterior).
 
+pares :: Int -> [(Int,Int)]
+pares n = [(x,y)| x<- primosHasta n, y<- primosHasta n, x+y==n , x<=y]
 
 
 --b) Define una función que tome como parámetro un entero n y devuelva si n es un
 --entero par mayor que 2 y además existe al menos una pareja de primos que sume n. Por ejemplo:
 --Para resolver este apartado puedes utilizar la función predefinida , que
 --toma una lista y devuelve si es vacía:
---Para comprobar la conjetura, define una función que tome como parámetro
+
+goldbach :: Int -> Bool
+goldbach n =  n>2 && even n && not(null (pares n))
+
+
+--c)Para comprobar la conjetura, define una función que tome como parámetro
 --un entero n y que devuelva si para todos los números pares mayores que 2 y menores o
 --iguales a n se cumple la conjetura. Por ejemplo: 
 --Ayuda: usa listas por comprensión y la función predefinida que toma
 --una lista de booleanos y devuelve si todos son ciertos.
---Existe una forma más débil de la conjetura, llamada Conjetura débil de Goldbach (CDG): todo impar
+
+goldbachHasta :: Int -> Bool
+goldbachHasta n = and [ (goldbach x) | x <- [3..n], even x]
+
+
+
+--d)Existe una forma más débil de la conjetura, llamada Conjetura débil de Goldbach (CDG): todo impar
 --mayor que 5 es suma de tres números primos. Si n es impar >5, entonces n-3 es par >2, y según la
 --CG, es suma de dos primos, de donde por ser 3 un primo, n será suma de tres primos; de aquí que
 --CG asegure CDG; sin embargo, CDG tampoco ha sido demostrada hasta la fecha. Define una nueva
 --función para comprobar esta forma de la conjetura.
 
-
-
-
-
-
+goldbachDebilHasta :: Int -> Bool
+goldbachDebilHasta n = and [ (goldbach3 x) | x <- [6..n]]
+          where
+            goldbach3 n =  n>5 && odd n && not(null([(x,y,z)| x<- primosHasta n, y<- primosHasta n,z<- primosHasta n, x+y+z==n , x<=y,y<=z]))
 
 
 --------------------------------------------------------------------------------------------------------
@@ -250,5 +262,14 @@ p1_primos x = primosHasta x == primosHasta' x
 ---número natural es perfecto si coincide con la suma de sus factores propios.
 --a) Escribe una función para comprobar si un número es perfecto. Por ejemplo:
 
+esPerfecto :: Int -> Bool
+esPerfecto n = n == sum (divisoress n)
+            where
+              divisoress n = [x| x<-[1..n], n `mod`x==0 , x/=n] 
+
+
 --b) Escribe otra función que devuelva una lista con los números perfectos menores o iguales a un valor
 --dado. Por ejemplo:
+
+perfectosMenoresQue :: Int -> [Int]
+perfectosMenoresQue n = [ x | x <- [1..n], esPerfecto x]
