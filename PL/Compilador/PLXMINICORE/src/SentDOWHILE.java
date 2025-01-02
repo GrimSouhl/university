@@ -1,27 +1,36 @@
-public class SentDOWHILE extends Instruccion {
-    
-    private Instruccion cuerpo;  
-    private Instruccion condicion;  
+import java.text.ParseException;
 
-    public SentDOWHILE(int linea, Instruccion cuerpo, Instruccion condicion) {
+public class SentDOWHILE extends Instruccion {
+    Instruccion exp, i;
+
+    public SentDOWHILE(int linea, Instruccion exp, Instruccion i) {
         super(linea);
-        this.cuerpo = cuerpo;
-        this.condicion = condicion;
+        this.exp = exp;
+        this.i = i;
     }
 
     @Override
     public Objeto generarCodigo() throws Exception {
-        Objeto oCuerpo = cuerpo.generarCodigo();
-        Objeto oCondicion = condicion.generarCodigo();
-        Etiqueta inicioCiclo = new Etiqueta(Objeto.newEtiqueta(), oCuerpo.getBloque());
-        Etiqueta finCiclo = new Etiqueta(Objeto.newEtiqueta(), oCuerpo.getBloque());
-        
-        PLXC.out.println(inicioCiclo.getIDC() + ":");
-        oCuerpo.generarCodigoMetodo(Metodo.IMPRIMIR, new Objeto[] {oCuerpo});  
+        Objeto expObj;
+        String etq = Objeto.newEtiqueta();
 
-        PLXC.out.println("if (" + oCondicion.getIDC() + ") goto " + inicioCiclo.getIDC() + ";");
-        PLXC.out.println(finCiclo.getIDC() + ":");
- 
-        return oCuerpo;  
+        PLXC.out.println(etq + ":"); // etq:
+        i.generarCodigo(); // i
+
+        expObj = exp.generarCodigo();
+
+        if(!(expObj instanceof Instancia)) {
+            throw new ParseException("La expresión del do-while debe ser una instancia (literal o variable)", getLinea());
+        }
+
+        // Intentamos convertir a booleano
+        if(((Instancia) expObj).getTipo() != TipoBool.instancia) {
+            expObj = expObj.generarCodigoMetodo(Metodo.CAST, new Objeto[]{TipoBool.instancia}, getLinea());
+        }
+
+        PLXC.out.println("if (" + expObj.getIDC() + " != 0) goto " + etq + ";"); // if (exp != 0) goto etq;
+
+        return null;
     }
+    
 }

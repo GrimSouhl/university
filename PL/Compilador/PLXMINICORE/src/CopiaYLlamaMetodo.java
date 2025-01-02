@@ -18,7 +18,7 @@ public class CopiaYLlamaMetodo extends Instruccion{
         Variable o1 = (Variable) e1.generarCodigo();
 
         r = new Variable( Objeto.newNombObj(), o1.getBloque(),true, o1.getTipo());
-        r.generarCodigoMetodo(Metodo.CONSTRUCTORCOPIA, new Objeto[] {o1});
+        r.generarCodigoMetodo(Metodo.CONSTRUCTORCOPIA, new Objeto[] {o1},getLinea());
 
         if(param!= null){
             oParam = new Objeto[param.length];
@@ -28,7 +28,7 @@ public class CopiaYLlamaMetodo extends Instruccion{
             }
         }
 
-        r.generarCodigoMetodo(metodo,oParam);
+        o1.generarCodigoMetodo(metodo,oParam,getLinea());
 
             return r;
     }

@@ -7,9 +7,9 @@ public abstract class Tipo extends Objeto{
         public static final String REAL = "$float";
     }
 
-    public Tipo(String nombre, int bloque, boolean mutable) {
-        super(nombre, bloque, mutable);
-    }
-
-    public abstract Objeto generarCodigoInstancia(Instancia instancia, String metodo, Objeto[] param) throws Exception ;
+    public Tipo (String nombre, int bloque, boolean mutable) {
+		super(nombre,bloque,mutable);
+	}
+	
+	public abstract Objeto generarCodigoInstancia(Instancia instancia, String metodo, Objeto[] param, int linea) throws Exception;
 }

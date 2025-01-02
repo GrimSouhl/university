@@ -6,9 +6,11 @@ public class TipoBool extends Tipo {
     private TipoBool() {
         super(Predefinidos.BOOLEANO, 0, false);  
     }
-
+    public Objeto generarCodigoMetodo (String metodo, Objeto[] param,int linea) throws Exception {
+        return null;
+    }
     @Override
-    public Objeto generarCodigoInstancia(Instancia instancia, String metodo, Objeto[] param) throws Exception {
+    public Objeto generarCodigoInstancia(Instancia instancia, String metodo, Objeto[] param,int linea) throws Exception {
         Instancia par;
         Variable v;
         String et1;
@@ -33,7 +35,7 @@ public class TipoBool extends Tipo {
                 par = (Instancia) p;
 
                 if (par.getTipo() != this) {
-                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this});
+                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this},linea);
                 }
 
                 PLXC.out.println(instancia.getIDC() + " = " + par.getIDC() + ";");
@@ -144,10 +146,5 @@ public class TipoBool extends Tipo {
         }
 
         return null;
-    }
-
-    @Override
-    public Objeto generarCodigoMetodo(String metodo, Objeto[] param) throws Exception {
-        return null;  // Si no necesitas un comportamiento diferente, deja este método vacío
     }
 }

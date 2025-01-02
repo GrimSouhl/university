@@ -65,7 +65,7 @@ precedence left COMA;
 precedence left ASIGNA;
 precedence left OLOG;
 precedence left YLOG;
-precedence nonassoc ADMIR; //esto es el operador NOT , o sea la exclamacion
+precedence nonassoc ADMIR; //esto es el operador NOT 
 precedence left IGUAL,DIFERENTE;
 precedence left MAYOR,MAYORIG, MENOR,MENORIG;
 precedence left MAS,MENOS;
@@ -92,23 +92,21 @@ Lista_de_sent::= Sentencia Lista_de_sent {: Bloque b=new Bloque(PLXC.lex.getLine
 
 Sentencia ::= List_declar_var PCOMA   {:  RESULT =l;   :}
             |Expresion PCOMA
-            |IF AP Expresion:c CP Sentencia Else_if //...falta
-
+            |IF AP Expresion:c CP Sentencia Else_if Sentencia 
             |WHILE AP Expresion:c CP Sentencia
 
             |DO Sentencia WHILE AP Expresion:c CP PCOMA
 
             |FOR AP Expresion:a PCOMA Expresion:b PCOMA Expresion:c CP Sentencia
 
-            |PRINT AP Expresion:e CP PCOMA  //no sabe si lo trata con un metodo mas o deja el print como un caso especial aqui, o sea sentencia
+            |PRINT AP Expresion:e CP PCOMA  
 
-            |A_LLAVE Inicio_bloque Lista_de_sent C_LLAVE //en el if, una sentencia es un codigo entre llaves, donde hay sentencia hay un bloque de codigo  if (){ todo esto una unica instruccion de C}. 
+            |A_LLAVE Inicio_bloque Lista_de_sent C_LLAVE 
             {:
             tabla.borrarBloque(bloqueActual);
             bloqueActual:ba;
-            //he cerrado un bloque, tengo que perder todas las variables que habia en ese bloque
-           
             :}
+
             |A_LLAVE C_LLAVE
             |FOR Var_for:v ASIGNA Expresion:ei Direccion_for:d Expresion:ef Paso:p Sentencia 
 
@@ -194,6 +192,6 @@ OperadorL ::= YLOG {:RESULT = Metodo.YLOG;:}
 OperadorU ::= MENOSMENOS {:RESULT = Metodo.NEG;:}
             |MASMAS {:RESULT = Metodo.POS;:}
             |VIRGU {:RESULT = Metodo.VIRGU;:}
-            |MENOS      
+            |MENOS   
             |ADMIR
             ;

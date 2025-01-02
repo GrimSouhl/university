@@ -17,13 +17,13 @@ public class Cortocircuito extends Instruccion{
 
         Objeto o1 = e1.generarCodigo();
 
-        Etiqueta destino = new Etiqueta( Objeto.newNombObj(), o1.getBloque());
+        Etiqueta destino = new Etiqueta( Objeto.newEtiqueta(), o1.getBloque());
 
-        Objeto r = (Objeto) o1.generarCodigoMetodo( metodo,new Objeto[] {destino});
+        Objeto r = (Objeto) o1.generarCodigoMetodo( metodo,new Objeto[] {destino}, getLinea());
 
         Objeto o2 = e2.generarCodigo();
 
-        r.generarCodigoMetodo(Metodo.CONSTRUCTORCOPIA, new Objeto[]{o2} );
+        r.generarCodigoMetodo(Metodo.CONSTRUCTORCOPIA, new Objeto[]{o2} , getLinea());
 
         destino.generarCodigoMetodo(Metodo.PONERETIQ,null,getLinea());
         

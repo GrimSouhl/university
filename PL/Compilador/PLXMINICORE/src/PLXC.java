@@ -1,66 +1,41 @@
-import java.io.IOException;
+import java.io.FileReader;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.text.ParseException;
 
 public class PLXC {
+	public static PrintStream out;
+	public static Yylex lex;
 
-    // Instancia del lexer (análisis léxico)
-    public static PLXC lex;
+	public static void main(String argv[]) {
+		try {
+			Reader in = new InputStreamReader(System.in);	
+			out = System.out;
+			if (argv.length>0) {
+				in = new FileReader(argv[0]);
+			}
+			if (argv.length>1) {
+				out = new PrintStream(new FileOutputStream(argv[1]));
+			}
+			lex = new Yylex(in);
+			parser p = new parser(lex);
+			Instruccion i = (Instruccion) p.parse().value;
+			i.generarCodigo();
+		} catch (ParseException e) {
+			// Errores en el código a compilar
+			PLXC.out.println("# Parse Error");
+			PLXC.out.println("error;");
+			PLXC.out.println("halt;");
 
-    // Tabla de símbolos donde se guardan las variables, funciones, etc.
-    public static TablaSimbolos ts;
-
-    // Un contador para los objetos generados (por ejemplo, variables temporales)
-    public static int numObj = 0;
-
-    // Objeto para manejar la salida generada
-    public static PrintStream out;
-
-    // Constructor por defecto
-    public PLXC() {
-        lex = new PLXC();  
-        ts = new TablaSimbolos();  
-        out = System.out;  
-    }
-
-    public static void initLexer(String input) {
-        lex.yyreset(input); 
-    }
-
-
-    public static void analizar() {
-        try {
-            Parser p = new Parser(lex);
-            p.parse(); 
-        } catch (Exception e) {
-            System.err.println("Error en el análisis: " + e.getMessage());
-        }
-    }
-
-    public static void imprimirResultado() {
-        ts.imprimirTabla();  
-    }
-    public static void main(String[] args) {
-        if (args.length < 1) {
-            System.err.println("Debe proporcionar un archivo de entrada.");
-            return;
-        }
-
-        String archivo = args[0];
-        try {
-            String input = new String(Files.readAllBytes(Paths.get(archivo)), StandardCharsets.UTF_8);
-            initLexer(input); 
-            analizar();  
-            imprimirResultado();  
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
-        }
-    }
-
-    public int getLine() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getLine'");
-    }
+			System.err.println("Error: " + e.getMessage());
+			System.err.println("Línea: " + e.getErrorOffset());
+			System.exit(-1);
+		} catch (Exception e) {
+			// Errores internos
+			System.err.println(e.getMessage());
+			System.exit(-1);
+		}
+	}
 }

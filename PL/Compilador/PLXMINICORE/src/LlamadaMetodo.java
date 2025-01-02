@@ -27,7 +27,7 @@ public Objeto generarCodigo() throws Exception {
         }
     }
 
-    Objeto r = (Objeto) o1.generarCodigoMetodo(metodo, oParam);
+    Objeto r = (Objeto) o1.generarCodigoMetodo(metodo, oParam,getLinea());
     return r;
 }
 

@@ -8,6 +8,11 @@ public abstract class Instancia extends Objeto{
 		super(nombre, bloque, mutable);
 		this.tipo = tipo;
 	}
+	
+    public Instancia(String nombre, Tipo tipo, int bloque, boolean flag, int linea) {
+        super(nombre, bloque, flag);
+        this.tipo = tipo;
+    }
 
 
     public Tipo getTipo() { return this.tipo; }

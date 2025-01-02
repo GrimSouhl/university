@@ -7,7 +7,12 @@ public class TipoInt extends Tipo{
         super(Predefinidos.ENTERO,0,false);
     }
 
-    public Objeto generarCodigoInstancia(Instancia instancia, String metodo, Objeto[] param) throws Exception{
+   
+    public Objeto generarCodigoMetodo(String metodo, Objeto[] param, int linea) throws Exception{
+        return null;
+    }
+
+    public Objeto generarCodigoInstancia(Instancia instancia, String metodo, Objeto[] param,int linea) throws Exception{
         Instancia par;
         Variable v;
         String et1;
@@ -29,7 +34,7 @@ public class TipoInt extends Tipo{
                 par = (Instancia) p;
 
                 if(par.getTipo()!= this) {
-                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this});
+                    par = (Instancia) par.generarCodigoMetodo(Metodo.CAST, new Objeto[]{this}, linea);
                 }
 
                PLXC.out.println( instancia.getIDC() + " = "+ par.getIDC()+ ";");
@@ -181,10 +186,7 @@ public class TipoInt extends Tipo{
         }
         return null;
     }
-
-    public Objeto generarCodigoMetodo(String metodo, Objeto[] param) throws Exception{
-        return null;
-    }
+    
 }
 
 

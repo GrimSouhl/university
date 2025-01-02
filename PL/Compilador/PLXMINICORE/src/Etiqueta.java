@@ -36,12 +36,6 @@ public class Etiqueta extends Objeto{
     }
         return null;
     }
-
-    @Override
-    public Object generarCodigoMetodo(String metodo, Objeto[] param) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'generarCodigoMetodo'");
-    }
         
 }
     
