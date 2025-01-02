@@ -1,11 +1,3 @@
-{-|
-Module      : SUTTest.hs
-Description : Simple example of unit testing with HUnit.
-Copyright   : (c) Pablo López, 2020
-
-The function 'suma' is imported from SUT.hs (Subject Under Test)
--}
-
 module SUTTest where
 
 import           SUT        (suma)

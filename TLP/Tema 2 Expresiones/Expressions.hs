@@ -39,7 +39,7 @@ CheckList
  - testUpdates: OK
 
  5:
- - foldAexp: REPASAR
+ - foldAexp: OK
  - aVal': -
  - fvAexp': -
  - substAexp': -
@@ -58,9 +58,7 @@ module Expressions where
 import           Aexp
 import           Bexp
 import           State
-
-
-import           Test.HUnit hiding (State)
+import Test.HUnit hiding (State)
 
 -- |----------------------------------------------------------------------
 -- | Exercise 1 - Semantics of binary numerals
@@ -289,25 +287,29 @@ testUpdates = test ["multiple updates" ~: 3 ~=? (updates sInit ["x" :=>: 1, "y" 
 -- |----------------------------------------------------------------------
 -- | Define a function 'foldAexp' to fold an arithmetic expression
 
-foldAexp ::(a -> a -> a) -> (a -> a -> a) -> (a -> a -> a) -> (Var -> a) -> (Integer -> a) -> Aexp -> a 
-foldAexp suma mult resta var litNum e = plegar e 
-    where 
-        plegar (N numero) = litNum numero 
-        plegar (V variable) = var variable 
-        plegar (Add e1 e2) = suma (plegar e1) (plegar e2) 
-        plegar (Mult e1 e2) = mult (plegar e1) (plegar e2) 
-        plegar (Sub e1 e2) = resta (plegar e1) (plegar e2) 
+
+
+foldAexp :: (a -> a -> a) -> (a -> a -> a) -> (a -> a -> a) -> (Var -> a)-> (NumLit -> a) -> Aexp -> a
+foldAexp suma mult resta var litNum e = plegar e
+    where
+        plegar (N numero) = litNum numero
+        plegar (V variable) = var variable
+        plegar (Add e1 e2) = suma (plegar e1) (plegar e2)
+        plegar (Mult e1 e2) = mult (plegar e1) (plegar e2)
+        plegar (Sub e1 e2) = resta (plegar e1) (plegar e2)
 
 -- | Use 'foldAexp' to define the functions 'aVal'', 'fvAexp'', and 'substAexp''.
 
+--evalua expresiones aritmeticas
 aVal' :: Aexp -> State -> Z
-aVal' = undefined
+aVal' a s = foldAexp (+) (*) (-) s read a
 
+--
 fvAexp' :: Aexp -> [Var]
-fvAexp' = undefined
+fvAexp' = foldAexp (++) (++) (++) (:[]) (const []) 
 
 substAexp' :: Aexp -> Subst -> Aexp
-substAexp' = undefined
+substAexp' aex (v :->: a) = foldAexp Sub Mult Add (\x -> if x == v then a else V x) N aex
 
 -- | Test your functions with HUnit.
 
@@ -316,11 +318,27 @@ substAexp' = undefined
 -- | Define a function 'foldBexp' to fold a Boolean expression and use it
 -- | to define the functions 'bVal'', 'fvBexp'', and 'substAexp''.
 
-foldBexp :: untyped
-foldBexp = undefined
+foldBexp :: a -> a -> (a -> a) -> (Aexp -> Aexp -> a) -> (Aexp -> Aexp -> a) -> (a -> a-> a) -> Bexp -> a
+foldBexp tt ff fneg feq fle fand = plegar
+    where
+        plegar TRUE = tt
+        plegar FALSE = ff
+        plegar (Equ a1 a2) = feq a1 a2
+        plegar (Leq a1 a2) = fle a1 a2
+        plegar (Neg b1) = fneg (plegar b1)
+        plegar (And b1 b2) = fand (plegar b1) (plegar b2)
+--data  Bexp  =  TRUE
+--            |  FALSE
+--            |  Equ Aexp Aexp
+ --           |  Leq Aexp Aexp
+ --           |  Neg Bexp
+ --           |  And Bexp Bexp
+ --           deriving (Show, Eq)
 
 bVal' :: Bexp -> State -> Bool
-bVal' = undefined
+bVal' bex s = foldBexp True False not (\a1 a2 -> (==) (f a1) (f a2)) (\a1 a2 -> f a1 <= f a2) (&&) bex
+    where
+        f a = aVal' a s
 
 fvBexp' :: Bexp -> [Var]
 fvBexp' = undefined
