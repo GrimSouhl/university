@@ -1,9 +1,3 @@
-----------------------------------------------------------------
--- Lenguajes de Programación
--- 4 del Grado en Ingeniería Informática, mención en Computación
--- Pablo López
-----------------------------------------------------------------
-
 {-
 Checklist:
 
