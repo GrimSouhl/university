@@ -17,14 +17,14 @@ public class Etiqueta extends Objeto{
 
     public Objeto generarCodigoMetodo(String metodo, Objeto[]params, int linea)throws ParseException{
         switch(metodo) {
-            case Metodo.PONERETIQ:
+            case Metodo.PONER_ETQ:
                 if(puesta){
                     throw new ParseException("lAS ETIQUETAS SOLO SE PUEDEN PONER", linea);
                 }
                 puesta = true;
                 PLXC.out.println( getIDC()+":");
                 break;
-            case Metodo.SALTARETIQ:
+            case Metodo.SALTAR_ETQ:
                 if (params == null || params.length == 0) {
                     throw new ParseException("Etiqueta de salto no proporcionada.", linea);
                 }

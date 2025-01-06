@@ -23,9 +23,9 @@ public class Cortocircuito extends Instruccion{
 
         Objeto o2 = e2.generarCodigo();
 
-        r.generarCodigoMetodo(Metodo.CONSTRUCTORCOPIA, new Objeto[]{o2} , getLinea());
+        r.generarCodigoMetodo(Metodo.CREAR_VARIABLE, new Objeto[]{o2} , getLinea());
 
-        destino.generarCodigoMetodo(Metodo.PONERETIQ,null,getLinea());
+        destino.generarCodigoMetodo(Metodo.PONER_ETQ,null,getLinea());
         
         return r;
     }

@@ -16,18 +16,18 @@ public class TipoChar extends Tipo {
         String et1;
 
         switch (metodo) {
-            case Metodo.IMPRIMIR:
+            case Metodo.MOSTRAR:
                 PLXC.out.println("print " + instancia.getIDC() + ";");
                 break;
 
-            case Metodo.ASIGNA:
+            case Metodo.ASIGNAR:
                 if (!instancia.getMutable()) {
                     throw new ParseException("La variable " + instancia.getNombre() + " no es mutable", getBloque());
                 }
                 PLXC.out.println(instancia.getIDC() + " = " + param[0].getIDC() + ";");
                 break;
 
-            case Metodo.CONSTRUCTOR:
+            /*case Metodo.CONSTRUCTOR:
                 Objeto p = param[0];
                 if (!(p instanceof Instancia)) {
                     throw new ParseException("Se esperaba una instancia a la derecha", getBloque());
@@ -40,7 +40,7 @@ public class TipoChar extends Tipo {
 
                 PLXC.out.println(instancia.getIDC() + " = " + par.getIDC() + ";");
                 return param[0];
-
+            */
             case Metodo.CREAR_LITERAL:
                 PLXC.out.println(instancia.getIDC() + " = '" + ((Literal) instancia).getValor() + "';");
                 return instancia;
@@ -75,8 +75,8 @@ public class TipoChar extends Tipo {
 
             case Metodo.SUMA:
             case Metodo.RESTA:
-            case Metodo.MULT:
-            case Metodo.DIVID:
+            case Metodo.PRODUCTO:
+            case Metodo.DIVISION:
                 if (param == null || param.length != 1 || !(param[0] instanceof Instancia)) {
                     throw new ParseException("Se esperaba un parámetro de tipo instancia", getBloque());
                 }
@@ -96,10 +96,10 @@ public class TipoChar extends Tipo {
                     case Metodo.RESTA:
                         PLXC.out.println(instancia.getIDC() + " = " + instancia.getIDC() + " - " + par.getIDC() + ";");
                         break;
-                    case Metodo.MULT:
+                    case Metodo.PRODUCTO:
                         PLXC.out.println(instancia.getIDC() + " = " + instancia.getIDC() + " * " + par.getIDC() + ";");
                         break;
-                    case Metodo.DIVID:
+                    case Metodo.DIVISION:
                         PLXC.out.println(instancia.getIDC() + " = " + instancia.getIDC() + " / " + par.getIDC() + ";");
                         break;
                 }
@@ -126,9 +126,9 @@ public class TipoChar extends Tipo {
 
             case Metodo.IGUAL:
             case Metodo.MAYOR:
-            case Metodo.DIFERENTE:
+            case Metodo.DISTINTO:
             case Metodo.MENOR:
-            case Metodo.MAYORIG:
+            case Metodo.MAYOR_IGUAL:
                 if (param == null || param.length != 1 || !(param[0] instanceof Instancia)) {
                     throw new ParseException("Se esperaba un parámetro de tipo instancia para la comparación", getBloque());
                 }
@@ -147,13 +147,13 @@ public class TipoChar extends Tipo {
                     case Metodo.MAYOR:
                         PLXC.out.println("if (" + instancia.getIDC() + " > " + par.getIDC() + ") goto " + et2 + ";");
                         break;
-                    case Metodo.DIFERENTE:
+                    case Metodo.DISTINTO:
                         PLXC.out.println("if (" + instancia.getIDC() + " != " + par.getIDC() + ") goto " + et2 + ";");
                         break;
                     case Metodo.MENOR:
                         PLXC.out.println("if (" + instancia.getIDC() + " < " + par.getIDC() + ") goto " + et2 + ";");
                         break;
-                    case Metodo.MAYORIG:
+                    case Metodo.MAYOR_IGUAL:
                         PLXC.out.println("if (" + instancia.getIDC() + " >= " + par.getIDC() + ") goto " + et2 + ";");
                         break;
                 }
@@ -163,7 +163,7 @@ public class TipoChar extends Tipo {
                 PLXC.out.println(et2 + ":");
                 return instancia;
 
-            case Metodo.YLOG:
+            case Metodo.AND:
                 if (param == null || param.length != 1 || !(param[0] instanceof Instancia)) {
                     throw new ParseException("Se esperaba un parámetro para la operación lógica AND", getBloque());
                 }
@@ -172,7 +172,7 @@ public class TipoChar extends Tipo {
                 PLXC.out.println(instancia.getIDC() + " = " + instancia.getIDC() + " && " + par.getIDC() + ";");
                 return instancia;
 
-            case Metodo.OLOG:
+            case Metodo.OR:
                 if (param == null || param.length != 1 || !(param[0] instanceof Instancia)) {
                     throw new ParseException("Se esperaba un parámetro para la operación lógica OR", getBloque());
                 }
@@ -181,7 +181,7 @@ public class TipoChar extends Tipo {
                 PLXC.out.println(instancia.getIDC() + " = " + instancia.getIDC() + " || " + par.getIDC() + ";");
                 return instancia;
 
-            case Metodo.NLOG:
+            case Metodo.NOT:
                 PLXC.out.println(instancia.getIDC() + " = !" + instancia.getIDC() + ";");
                 return instancia;
 

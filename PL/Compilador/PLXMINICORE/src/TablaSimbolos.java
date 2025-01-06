@@ -21,7 +21,7 @@ public class TablaSimbolos {
         }
     }
 //busca el objeto por su nombre en cualquier bloque
-public Objeto buscar(String nombre) {
+    public Objeto buscar(String nombre) {
     if (nombre == null) {
         throw new IllegalArgumentException("El nombre del objeto no puede ser null");
     }
@@ -51,29 +51,27 @@ public Objeto buscar(String nombre) {
         tabla.remove(bloque);
     }
 
-    public Variable declararVariable(int linea, String nombre, Integer bloque, boolean mutable, Tipo tipo) throws Exception{
+    public Variable declararVariable(int linea, Variable v) throws Exception{
             
-        Objeto obj = buscar(nombre);
+        Objeto obj = buscar(v.getNombre());
 
-        if(obj!=null &&obj.getBloque() ==bloque){
-            throw new ParseException("Variable <"+ nombre+"> ya declarada en el mismo bloque", linea);
+        if(obj!=null &&obj.getBloque() ==v.getBloque()){
+            throw new ParseException("Variable <"+ v.getNombre()+"> ya declarada en el mismo bloque", linea);
         }
-
-        Variable v = new Variable(nombre,bloque, mutable, tipo);
         insertarObjeto(v);
 
         return v;
     }
 
 
-public void borrarBloque(int bloque){
-    tabla.remove(bloque);
-}
+    public void borrarBloque(int bloque){
+        tabla.remove(bloque);
+    }
 
-@Override
-public String toString(){
-    return tabla.toString();
-}
+    @Override
+    public String toString(){
+        return tabla.toString();
+    }
 
 }
 
