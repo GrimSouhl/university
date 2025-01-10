@@ -35,57 +35,94 @@ public class DictionaryStringTrie<V> {
 
   // | = Exercise a - constructor
   public DictionaryStringTrie() {
-    // TODO
+    root = null;
   }
 
   // | = Exercise b - isEmpty
   public boolean isEmpty() {
-    // TODO
-    return false;
+    /*(0.5 puntos) Implementa el método isEmpty que devuelve true si el trie está vacío o false en otro caso.
+        public boolean isEmpty() */
+        boolean ok= false;
+        if(root ==null){
+          ok=true;
+        }
+    return ok;
   }
 
   // | = Exercise c - sizeValue
   protected static <V> int sizeValue(V value) {
-    // TODO
-    return 0;
+    int ok = 0;
+    if(!(value == null)){
+      ok=1;
+    }
+    return ok;
   }
 
   // | = Exercise d - size
   public int size() {
     // TODO
-    return 0;
+    return size(root);
   }
 
   protected static <V> int size(Node<V> node) {
-    // TODO
-    return 0;
+    if(node == null){
+      return 0;
+    }else{
+      int s = 0;
+      for(var n : node.children.values()){
+        s += size(n);
+      }
+      return sizeValue(node.value) + s ;
+    }
   }
 
   // | = Exercise e - childOf
   protected static <V> Node<V> childOf(char c, Node<V> node) {
-    // TODO
-    return null;
+    /*(0.5 puntos) Implementa el método auxiliar childOf que, dado un carácter c y un nodo node,
+     devuelve el nodo asociado con c en el diccionario del nodo node. 
+     Si node es un Trie vacío o si c no es una clave en el diccionario, se devolverá null.
+        protected static <V> Node<V> childOf(char c, Node<V> node)*/
+
+    if(node == null){
+      return null;
+    }
+    return node.children.valueOf(c);
   }
 
   // | = Exercise f - search
   public V search(String str) {
     // TODO
-    return null;
+    return search(str,root);
   }
 
   protected static <V> V search(String str, Node<V> node) {
-    // TODO
-    return null;
+    if(node == null) {
+          return null;
+      }else if(str.isEmpty()) {
+          return node.value;
+      }
+      else {
+          return search(str.substring(1),childOf(str.charAt(0),node));
+    }
   }
 
   // | = Exercise g - insert
   public void insert(String str, V value) {
-    // TODO
+    if(root == null){
+      root = new Node<>();
+    }
+    insert(str,value,root);
   }
 
   protected static <V> Node<V> insert(String str, V value, Node<V> node) {
-    // TODO
-    return null;
+      if(str.isEmpty()) {
+          node.value = value;
+      }else {
+          var child = insert(str.substring(1),value, childOf(str.charAt(0),node));
+          node.children.insert(str.charAt(0),child);
+      }
+      return node;
+      
   }
 
   /*****************************************************************************

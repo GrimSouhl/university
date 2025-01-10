@@ -32,39 +32,70 @@ data Trie a = Empty | Node (Maybe a) (D.Dictionary Char (Trie a)) deriving Show
 
 -- | = Exercise a - empty
 empty :: Trie a
-empty = undefined
-
+empty = Empty
+------------------------------------------------------------------------------------------------------------
 -- | = Exercise b - isEmpty
 isEmpty :: Trie a -> Bool
-isEmpty = undefined
+isEmpty Empty = True
+isEmpty _     = False
 
+------------------------------------------------------------------------------------------------------------
 -- | = Exercise c - sizeValue
 sizeValue :: Maybe a -> Int
-sizeValue = undefined
-
+sizeValue Nothing = 0
+sizeValue _  = 1
+------------------------------------------------------------------------------------------------------------
+--(1 punto) Define la función size que, dado un Trie, devuelve el número de cadenas que almacena. 
+--Observa que por cada cadena almacenada habrá un nodo final en el Trie. 
+--Por ejemplo, para el Trie de la figura 1, la función size tiene que devolver 6.
 -- | = Exercise d - size
-size :: Trie a -> Int
-size = undefined
-
+size :: Trie a -> Int 
+size Empty = 0
+size (Node mb dictionario) = sizeValue mb + sum ( map size ( D.values dictionario))
+--si es final sizevalue mb devolverá 1, si no 0, luego map size aplica a todos los hijos (D.values dictionario) 
+--la funcion size recursivamente y vamos sacando la suma de los valores de los hijos
+------------------------------------------------------------------------------------------------------------
+--(0.5 puntos) Define la función toTrie que, dado un valor de tipo Maybe (Trie a), 
+--devuelve Empty si el argumento es Nothing o que devuelve el Trie argumento si éste es de la forma Just.
 -- | = Exercise e - toTrie
 toTrie :: Maybe (Trie a) -> Trie a
-toTrie = undefined
+toTrie Nothing = Empty
+toTrie (Just x) = x  --devuelve el Trie
 
+------------------------------------------------------------------------------------------------------------
+--(0.5 puntos) Define la función childOf que, dados un carácter c y un Trie t, 
+--devuelve el Trie asociado con el carácter c en el diccionario del nodo t.
+-- Si t es un Trie vacío o si c no es una clave en el diccionario del nodo t, se devolverá Empty.
 -- | = Exercise f - childOf
 childOf :: Char -> Trie a -> Trie a
-childOf = undefined
+childOf _ Empty = Empty
+childOf c (Node _ d) = toTrie (D.valueOf c d)
 
+
+------------------------------------------------------------------------------------------------------------
+--(1.5 puntos) Define la función search que, dados un String y un Trie t, devuelve el valor v asociado en el Trie 
+--a dicha cadena como Just v. Si el Trie t no contiene dicha cadena devuelve Nothing.
 -- | = Exercise g - search
 search :: String -> Trie a -> Maybe a
-search = undefined
+search _ Empty = Nothing
+search [] (Node mb _) = mb
+search (x:xs) t = search xs (childOf x t)
 
+------------------------------------------------------------------------------------------------------------
+--(0.5 puntos) Define la función update que toma un Trie t, un carácter c y un Trie child. Si el Trie t es vacío 
+--devuelve un Node no final cuyo diccionario incluye solamente una asociación entre el carácter c y el Trie child.
+-- En otro caso devuelve un Node como t pero cuyo diccionario se habrá actualizado para que el carácter c quede asociado
+-- con el Trie child.
 -- | = Exercise h - update
 update :: Trie a -> Char -> Trie a -> Trie a
-update = undefined
+update Empty car child = Node Nothing (D.insert car child D.empty)
+update (Node r dict) car child = Node r (D.insert car child dict)
 
 -- | = Exercise i - insert
 insert :: String -> a -> Trie a -> Trie a
-insert = undefined
+insert [] x Empty = Node (Just x) D.empty
+insert [] x (Node _ d) = Node (Just x) d
+insert (c:cs) x t = update t c (insert cs x (childOf c t))
 
 -------------------------------------------------------------------------------
 -- ONLY FOR PART TIME STUDENTS ------------------------------------------------
