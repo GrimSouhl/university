@@ -206,6 +206,18 @@ nsStm envV envP (Inter (Block decVar decProc ss) sto) = Final sto''
     sto'' = (InterD (Dec x a decs) envV store) 
 
 
+-- Call (non recursive)
+nsStm envV envP (Inter (Call p) sto) = Final sto'
+  where 
+    (s, envV', envP') = envProc envP p
+    Final sto' = nsStm envV' envP' (Inter s sto)
+
+-- Call (recursive)
+nsStm envV envP (Inter (Call p) sto) = Final sto'
+  where 
+    (s, envV', envP') = envProc envP p
+    envP'' = EnvP p s envV' envP' envP'
+    Final sto' = nsStm envV' envP'' (Inter s sto)
 
 -- semantic function for Natural Semantics
 sNs :: Stm -> Store -> Store

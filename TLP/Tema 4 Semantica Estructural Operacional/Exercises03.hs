@@ -243,7 +243,40 @@ data AexpConfig = Redex Aexp State  -- a redex is a reducible expression
 
 sosAexp :: AexpConfig -> AexpConfig
 
-sosAexp = undefined
+-- Numerales [N]
+sosAexp (Redex (N n) s) = Value (numLit n)
+-- Variables [V]
+sosAexp (Redex (V x) s) = Redex (N (show(s x))) s
+-- [+]
+sosAexp (Redex (Add (N n1) (N n2)) s) = Redex (N n3) s 
+    where 
+      n3 = show(numLit n1 + numLit n2)
+-- [-]
+sosAexp(Redex (Sub (N n1) (N n2)) s) = Redex (N n3) s
+    where 
+      n3 = show(numLit n1 - numLit n2)
+-- [*]
+sosAexp(Redex (Mult (N n1) (N n2)) s) = Redex (N n3) s
+    where 
+      n3 = show(numLit n1 * numLit n2)
+-- [+]
+sosAexp(Redex (Add (N n1) a2) s) = Redex (Add (N n1) a2') s'
+    where Redex a2' s' = sosAexp (Redex a2 s)
+-- [-]
+sosAexp(Redex (Sub (N n1) a2) s) = Redex (Sub (N n1) a2') s'
+    where Redex a2' s' = sosAexp (Redex a2 s)
+-- [*]
+sosAexp(Redex (Mult (N n1) a2) s) = Redex (Mult (N n1) a2') s'
+    where Redex a2' s' = sosAexp (Redex a2 s)
+-- [+]
+sosAexp(Redex (Add a1 a2) s) = Redex (Add a1' a2) s'
+    where Redex a1' s' = sosAexp (Redex a1 s)
+-- [-]
+sosAexp(Redex (Sub a1 a2) s) = Redex (Sub a1' a2) s'
+    where Redex a1' s' = sosAexp (Redex a1 s)
+-- [*]
+sosAexp(Redex (Mult a1 a2) s) = Redex (Mult a1' a2) s'
+    where Redex a1' s' = sosAexp (Redex a1 s)
 
 -- |----------------------------------------------------------------------
 -- | Exercise 5.2
