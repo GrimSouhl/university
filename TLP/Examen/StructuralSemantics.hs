@@ -20,10 +20,18 @@ module StructuralSemantics where
 -- NO MODIFICAR EL CODIGO DE ABAJO
 ----------------------------------------------------------------------
 
-import           Data.List.HT  (takeUntil)
+--import           Data.List.HT  (takeUntil)
 
 import           While21
 import           While21Parser
+
+-- Custom takeUntil implementation
+takeUntil :: (a -> Bool) -> [a] -> [a]
+takeUntil _ [] = []
+takeUntil p (x:xs)
+  | p x       = []
+  | otherwise = x : takeUntil p xs
+
 
 -- representation of configurations for While
 
@@ -98,7 +106,14 @@ sosStm (Inter (If b ss1 ss2) s)
 -- | Define the Structural Operational Semantics of the case statement.
 
 {-
-    Completa la definición semántica de la sentencia case.
+    Completa la definición semántica de la sentencia case:
+
+    1. Primero, evaluamos la expresión aritmética `a`.
+    2. Luego, comparamos el valor de `a` con las etiquetas de los casos en el orden dado (de arriba hacia abajo, y de izquierda a derecha en cada lista de etiquetas).
+    3. Si encontramos un caso cuya etiqueta coincida con el valor de `a`, ejecutamos la sentencia asociada a ese caso.
+    4. Si no encontramos ninguna coincidencia y existe un caso `default`, ejecutamos la sentencia asociada al `default`.
+    5. Si no encontramos coincidencias y no hay un caso `default`, lanzamos una excepción (en este caso, usando `Stuck`).
+
 
 -}
 
@@ -108,7 +123,19 @@ sosStm (Inter (If b ss1 ss2) s)
 
 -- | Implement in Haskell the Structural Semantics of the case statement.
 
-sosStm _= undefined
+sosStm (Inter (Case a lc) s)
+  = case findCase (aVal a s) lc of
+      Just stm -> Inter stm s  --encontrado caso se ejecuta sentencia
+      Nothing  -> Stuck (Case a lc) s  --sino stuck
+
+--Encuentra el caso que coincide con el valor de `a`. Si no hay coincidencia, busca el caso `default`.
+findCase :: Z -> LabelledStms -> Maybe Stm
+findCase _ EndLabelledStms = Nothing  --Si no hay más casos
+findCase a (LabelledStm labels stm rest)
+    | a `elem` labels = Just stm  --Si el valor de `a` coincide con alguna etiqueta
+    | otherwise = findCase a rest  --Si no, sigue buscando en el siguiente caso
+findCase _ (Default stm) = Just stm  --Si llega al caso `default`, ejecuta la sentencia
+
 
 ----------------------------------------------------------------------
 -- NO MODIFICAR EL CODIGO DE ABAJO
