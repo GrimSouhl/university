@@ -80,22 +80,67 @@ nodeWithHeight bin h left right =
 --y la correspondiente altura.
 
 node :: Bin -> AVL -> AVL -> AVL
-node bin left right = nodeWithHeight bin (1 + max (height left) (height right)) left right
+node bin left right = 
+  let h= 1+max (height left) (height right)
+  in nodeWithHeight bin h left right
+
+--d) (1 punto) Define una función rotateLeft que tome un cubo c, un AVL (hijo izquierdo) L y otro 
+--AVL no vacío (hijo derecho) R y que devuelva un AVL creado con dicha información tras aplicar, 
+--además, una rotación simple a la izquierda tal como se ve en la siguiente figura (dado que el árbol R 
+--no está vacío, se muestran su raíz, x, y sus hijos R1 y R2):
 
 rotateLeft :: Bin -> AVL -> AVL -> AVL
-rotateLeft _ _ _ = undefined
+rotateLeft c left (Node x hx mx leftR rightR)=
+  let newLeft = node c left leftR
+  in node x newLeft rightR
+rotatreLeft _ _ Empty = error "El árbol derecho no puede ser vacío"
+
+--e) (1,5 puntos) Define una función addNewBin que tome un cubo y un árbol AVL y que añada un 
+--nuevo nodo con dicho cubo al final de la espina derecha del AVL. Para mantener el invariante de los 
+--árboles AVL, en cada nodo de la espina derecha, si la altura resultante del hijo derecho es más de una 
+--unidad superior a la del hijo izquierdo, habrá que aplicar una rotación simple a la izquierda. 
 
 addNewBin :: Bin -> AVL -> AVL
-addNewBin _ _ = undefined
+addNewBin bin Empty = node bin Empty Empty
+addNewBin bin (Node root h maxcap left right)=
+  let newRight = addNewBin bin right
+  in if height newRight > height left + 1
+    then rotateLeft root left newRight
+    else node root left newRight
  
+--f) (2.0 puntos) Define una función addFirst que tome la capacidad de los cubos del problema (W), 
+--el peso de un objeto a añadir y un AVL y que añada dicho objeto al primer cubo que pueda albergarlo 
+--o añada un nuevo cubo al final de la espina derecha si el nuevo objeto no cabe en ningún cubo. El 
+--algoritmo será el siguiente: 
+-- Si el AVL está vacío o no cabe en ningún cubo, se añadirá un nuevo nodo con un cubo con el 
+--objeto al final de la espina derecha. 
+-- En otro caso, si la capacidad restante máxima del hijo izquierdo es mayor o igual al peso del 
+--objeto, se añadirá el objeto al primer cubo posible del hijo izquierdo. 
+-- En otro caso, si la capacidad restante del cubo en el nodo raíz es mayor o igual al peso del 
+--objeto, se añadirá el objeto al cubo en la raíz. 
+-- En otro caso, se añadirá el objeto al primer cubo posible del hijo derecho. 
+
 addFirst :: Capacity -> Weight -> AVL -> AVL
-addFirst _ _ _ = undefined
+addFirst w obj Empty = addNewBin (addObject obj (emptyBin w)) Empty
+addFirst w obj (Node bin h maxcap left right) 
+  | obj <= maxRemainingCapacity left = node bin (addFirst w obj left) right
+  | obj <= remainingCapacity bin = node (addObject obj bin) left right
+  | otherwise = node bin left (addFirst w obj right)
+
+--g) (0,75 puntos) Define una función addAll que tome el valor de la capacidad máxima de los cubos 
+--(W), una lista de pesos de objetos y que construya un AVL con cubos que contenga todos los objetos 
+--de la lista, según se ha descrito anteriormente. 
 
 addAll:: Capacity -> [Weight] -> AVL
-addAll _ _ = undefined
+addAll w = foldl ( flip (addFirst w)) Empty
+
+--h) (0,75 puntos) Define una función toList que tome un AVL y devuelva una lista de cubos con su 
+--recorrido en en-orden.
 
 toList :: AVL -> [Bin]
-toList _ = undefined
+toList Empty = []
+toList (Node bin _ _ left right) =
+  toList left ++ [bin] ++ toList right
 
 {-
 	SOLO PARA ALUMNOS SIN EVALUACION CONTINUA
