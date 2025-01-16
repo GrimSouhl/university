@@ -34,13 +34,7 @@ public class TipoBool extends Tipo {
 
                 PLXC.out.println(instancia.getIDC() + " = " + obj.getIDC() + ";");
                 return param[0];
-            // AND y OR (Mirar Clase CortoCircuito)
-            // $t0 = a;
-            // $t1 = $t0 (resultado);
-            // if ($t1 == 0) / ($t1 == 1) goto L;
-            // $t2 = b;
-            // $t1 = $t2;
-            // L:
+    
             case Metodo.AND:
             case Metodo.OR:
                 if(param == null) {
