@@ -27,69 +27,42 @@ public class SetChain<T extends Comparable<? super T>> implements Iterable<T>{
 
   // * Exercise a) 
   public SetChain() {
-    mempool = new HashSet();
-    history = new AVLDictionary<>();
-    epochNum = 0;
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise b) 
   public boolean isEmpty() {
-    return (mempool.isEmpty() && history.isEmpty());
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise c) 
   public int getEpoch(T transaction) {
-
-    for( Tuple2<Integer,Set<T>> tup : history.keysValues()) {
-        if(tup._2().isElem(transaction)) {
-          return tup._1() ;
-        }
-    }
-    return -1 ;
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise d) 
   public int size() {
-    int total = 0;
-    for ( Set<T> set :history.values()){
-      total += set.size();
-    }
-    return total;
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise e) 
   public boolean pendingTransactions() {
-    return mempool.isEmpty();
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise f) 
   public void add(T transaction) {
-
-      mempool.insert(transaction);
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise g) 
   public void validate() {
-    Iterator<T> it = mempool.iterator();
-    boolean valid = true;
-    while (it.hasNext() && valid) {
-      if(getEpoch(it.next()) >= 0) {
-        valid = false;
-        throw new SetChainException("Transaction " + it.next() + " has already been validated");
-      }
-    }
-
-    history.insert(epochNum, mempool);
-    epochNum++;
-    mempool=new HashSet();
-
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise h) 
   public void addAll(List<T> transactions) {
-    for(T transaction : transactions) {
-      add(transaction);
-    }
+    throw new UnsupportedOperationException("to be implemented");
   }
 
   // * Exercise i) 
