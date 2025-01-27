@@ -36,14 +36,16 @@ empty = Empty
 ------------------------------------------------------------------------------------------------------------
 -- | = Exercise b - isEmpty
 isEmpty :: Trie a -> Bool
-isEmpty Empty = True
-isEmpty _     = False
+isEmpty (Empty) = True
+isEmpty (Node _ _) = False
 
 ------------------------------------------------------------------------------------------------------------
 -- | = Exercise c - sizeValue
+--(0.5 puntos) Define la función sizeValue que, dado un valor de tipo Maybe a, devuelva 0 si es Nothing o 1 en caso contrario (si es un Just).
 sizeValue :: Maybe a -> Int
 sizeValue Nothing = 0
-sizeValue _  = 1
+sizeValue (Just a) = 1
+
 ------------------------------------------------------------------------------------------------------------
 --(1 punto) Define la función size que, dado un Trie, devuelve el número de cadenas que almacena. 
 --Observa que por cada cadena almacenada habrá un nodo final en el Trie. 
@@ -51,16 +53,20 @@ sizeValue _  = 1
 -- | = Exercise d - size
 size :: Trie a -> Int 
 size Empty = 0
-size (Node mb dictionario) = sizeValue mb + sum ( map size ( D.values dictionario))
+size (Node maybe dict) = sizeValue maybe + sum ( map size ( D.values dict))
 --si es final sizevalue mb devolverá 1, si no 0, luego map size aplica a todos los hijos (D.values dictionario) 
 --la funcion size recursivamente y vamos sacando la suma de los valores de los hijos
+
+
 ------------------------------------------------------------------------------------------------------------
 --(0.5 puntos) Define la función toTrie que, dado un valor de tipo Maybe (Trie a), 
 --devuelve Empty si el argumento es Nothing o que devuelve el Trie argumento si éste es de la forma Just.
 -- | = Exercise e - toTrie
+
 toTrie :: Maybe (Trie a) -> Trie a
 toTrie Nothing = Empty
-toTrie (Just x) = x  --devuelve el Trie
+toTrie (Just x) = x
+
 
 ------------------------------------------------------------------------------------------------------------
 --(0.5 puntos) Define la función childOf que, dados un carácter c y un Trie t, 
@@ -77,8 +83,8 @@ childOf c (Node _ d) = toTrie (D.valueOf c d)
 --a dicha cadena como Just v. Si el Trie t no contiene dicha cadena devuelve Nothing.
 -- | = Exercise g - search
 search :: String -> Trie a -> Maybe a
-search _ Empty = Nothing
-search [] (Node mb _) = mb
+search _ Empty = Nothing 
+search [] (Node mb _) = mb  
 search (x:xs) t = search xs (childOf x t)
 
 ------------------------------------------------------------------------------------------------------------
@@ -103,12 +109,17 @@ insert (c:cs) x t = update t c (insert cs x (childOf c t))
 
 -- | = Exercise e1 - strings
 strings :: Trie a -> [String]
-strings t = undefined
+strings t = strings' t ""
+  where
+    strings' Empty _ = []
+    strings' (Node maybe dict) cadena = 
+      let currentstr = if isJust maybe then [cadena] else []
+          childStrings = concatMap (\(char, trie) -> strings' trie (cadena ++ [char])) (D.keysValues dict)
+      in currentstr ++ childStrings
 
 -- | = Exercise e2 - fromList
 fromList :: [String] -> Trie Int
-fromList xs = undefined
-
+fromList xs = foldl (\trie (str, idx) -> insert str idx trie) empty (zip xs [1..])
 -------------------------------------------------------------------------------
 -- DO NOT WRITE ANY CODE BELOW ------------------------------------------------
 -------------------------------------------------------------------------------
