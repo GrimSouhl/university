@@ -2,7 +2,7 @@ module DataStructures.Set.IntBits
   ( IntBits
   , empty
   , isEmpty
-  , insert
+  , set
   , delete
   , isElem
   , union
@@ -27,8 +27,8 @@ empty = IB 0
 isEmpty :: IntBits -> Bool
 isEmpty (IB bits) = bits == 0
 
-insert :: Int -> Int -> Int
-insert x bits = setBit bits x
+set :: Int -> Int -> Int
+set x bits = setBit bits x
 
 delete :: Int -> IntBits -> IntBits
 delete x (IB bits) = IB (clearBit bits x)
@@ -46,7 +46,7 @@ difference :: IntBits -> IntBits -> IntBits
 difference (IB bits1) (IB bits2) = IB (bits1 .&. complement bits2)
 
 fromList :: [Int] -> IntBits
-fromList = IB . foldl' (flip insert) 0
+fromList = IB . foldl' (flip set) 0
 
 toList :: IntBits -> [Int]
 toList (IB bits) = toList' bits 0
