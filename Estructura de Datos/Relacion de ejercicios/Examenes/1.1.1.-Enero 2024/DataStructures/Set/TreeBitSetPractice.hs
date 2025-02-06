@@ -2,7 +2,7 @@
 --Student's group: 
 --Identity number (DNI if Spanish/passport if Erasmus):
 
-module DataStructures.Set.TreeBitSet (
+module DataStructures.Set.TreeBitSetPractice (
   TreeBitSet,
   empty,
   size,
@@ -48,10 +48,10 @@ isValidCapacity capacity
 --capacidad en caso contrario. 
 makeTree :: Int -> Tree
 makeTree cap
-  | cap < bitsPerLeaf = Leaf 0
-  | otherwise = Node (makeTree mitad) (makeTree mitad)
-    where
-      mitad = div cap 2
+    | cap > bitsPerLeaf = Node (makeTree mitad) (makeTree mitad)
+    | otherwise = Leaf 0 
+      where 
+        mitad = cap `div` 2
 
 -- | Función para crear un TreeBitSet vacío con la capacidad dada
 --data TreeBitSet = TBS Int Tree
@@ -66,10 +66,10 @@ makeTree cap
 --must be positive” o “capacity must be 64 multiplied by a power of 2” 
 --respectivamente. 
 empty :: Int -> TreeBitSet
-empty cap 
-  | cap<0 = error "capacity must be positive"
-  | not ( isValidCapacity cap) = error "capacity must be 64 multiplied by a power of 2"
-  | otherwise = (TBS cap (makeTree cap) )
+empty cap
+    | isValidCapacity cap = TBS cap (makeTree cap)
+    | cap < 0 = error "apacity must be positive"
+    | otherwise = error "capacity must be 64 multiplied by a power of 2"
 
 -- | Función para obtener el tamaño de un TreeBitSet
 --(1.25 puntos) Implementa la función size, que toma un TreeBitSet y devuelve 
@@ -80,13 +80,10 @@ empty cap
 --la función IntBits.countOnes. 
 --Node Tree Tree 
 size :: TreeBitSet -> Int
-size (TBS cap tree) = contar tree 
-  where 
-    contar (Leaf l) = onesOnLeaf l
-    contar (Node izq der) = contar izq + contar der
-
-onesOnLeaf :: Int -> Int 
-onesOnLeaf l = IntBits.countOnes l
+size (TBS cap tree) = contar tree
+  where
+    contar (Leaf l) = (IntBits.countOnes l)
+    contar (Node left right) = contar left + contar right
 
 
 -- | Función para obtener la capacidad de un TreeBitSet
@@ -94,16 +91,16 @@ onesOnLeaf l = IntBits.countOnes l
 --devuelve la capacidad del conjunto. La función debe simplemente devolver el 
 --primer componente del valor TreeBitSet. 
 capacity :: TreeBitSet -> Int
-capacity (TBS cap arbol) = cap
-
+capacity (TBS cap tree) = cap
 
 -- | Función para verificar si un TreeBitSet está vacío
 --(0.25 puntos) Implementa la función isEmpty, que toma un TreeBitSet y 
 --devuelve True si el conjunto está vacío, y False en caso contrario. 
 isEmpty :: TreeBitSet -> Bool
-isEmpty tree 
-  |size tree == 0 = True
-  |otherwise =  False
+isEmpty tb@(TBS cap tree) 
+  | size tb == 0 = True 
+  |otherwise = False
+ 
 
 -- | Función para verificar si un elemento está fuera del rango de un TreeBitSet
 --(0.25 puntos) Implementa la función outOfRange, que toma un TreeBitSet y 
@@ -113,9 +110,9 @@ isEmpty tree
 --data Tree = Leaf Int | Node Tree Tree deriving Show
 --data TreeBitSet = TBS Int Tree deriving Show
 outOfRange :: TreeBitSet -> Int -> Bool
-outOfRange (TBS cap tree) valor
-    | valor < 0 || valor > cap = True
-    |otherwise = False
+outOfRange (TBS cap tree) elem 
+    | elem > cap || elem < 0  = True
+    |otherwise = False 
 
 
 -- | Función para verificar si un elemento está contenido en un TreeBitSet
@@ -131,15 +128,18 @@ outOfRange (TBS cap tree) valor
 --elemento está puesto en el conjunto de bits. 
 contains :: Int -> TreeBitSet -> Bool
 contains elem t@(TBS cap tree)
-    | outOfRange t elem =  False
-    | otherwise = treeHasElem tree elem cap
+    | outOfRange t elem = False
+    | otherwise = esta elem cap tree 
 
-treeHasElem :: Tree -> Int -> Int -> Bool
-treeHasElem (Leaf l) elem cap = IntBits.contains elem l
-treeHasElem (Node left right) elem cap
-    | elem < mitad = treeHasElem left elem mitad
-    |otherwise= treeHasElem right elem mitad
-      where mitad = div cap 2
+
+esta :: Int -> Int -> Tree -> Bool 
+esta elem cap (Leaf l) = IntBits.contains elem l
+esta elem cap (Node left right)
+    | elem > mitad = esta elem mitad right   
+    | otherwise = esta elem mitad left
+      where 
+        mitad = cap `div` 2
+
 
 
 -- | Función para agregar un elemento a un TreeBitSet
@@ -157,16 +157,17 @@ treeHasElem (Node left right) elem cap
 add :: Int -> TreeBitSet -> TreeBitSet
 --data TreeBitSet = TBS Int Tree deriving Show
 add elem t@(TBS cap tree) 
-  |outOfRange t elem = error "element is out of range"
-  |otherwise = ( TBS cap (addElem tree elem cap) ) 
+    | outOfRange t elem = error "fuera de rango"
+    | contains elem t = t
+    | otherwise = (TBS cap (metercoso cap elem tree)) 
 
-addElem :: Tree -> Int -> Int -> Tree
-addElem (Leaf l) elem cap =  (Leaf (IntBits.set elem l))
-addElem (Node left right) elem cap 
-  | elem < mitad = (Node (addElem left elem mitad) right)
-  |otherwise = (Node left (addElem right elem mitad))
-    where 
-      mitad = div cap 2
+metercoso :: Int -> Int -> Tree -> Tree
+metercoso cap elem (Leaf l) = (Leaf (IntBits.set l elem))
+metercoso cap elem (Node left right)
+    | cap < mitad = metercoso mitad elem left
+    | otherwise = metercoso mitad elem right
+      where
+        mitad = cap `div` 2
 
 -- | Función para convertir un TreeBitSet a una lista de elementos
 --(1.25 puntos) Implementa la función toList que toma un TreeBitSet y devuelve 
@@ -178,14 +179,14 @@ addElem (Node left right) elem cap
 --el conjunto de bits.
 
 toList :: TreeBitSet -> [Int]
-toList t@(TBS cap tree) 
-  | isEmpty t = []
-  | otherwise = listaelems tree cap  
+toList t@(TBS cap tree)
+    | isEmpty t  = []
+    | otherwise = lista cap tree 
 
-listaelems :: Tree -> Int -> [Int]
-listaelems (Leaf l) cap = filter (IntBits.contains l) [0..bitsPerLeaf-1]
-listaelems (Node left right) cap = (listaelems left mitad) ++ (listaelems right mitad) 
-  where
+lista :: Int -> Tree -> [Int]
+lista cap (Leaf l) = filter (IntBits.contains l) [0..bitsPerLeaf-1] 
+lista cap (Node left right) = (lista mitad left) ++ (lista mitad right)
+  where 
     mitad = cap `div` 2
 
 
@@ -203,13 +204,12 @@ listaelems (Node left right) cap = (listaelems left mitad) ++ (listaelems right 
 --dos conjuntos, y no convirtiendo los conjuntos en listas u otra estructura de datos 
 --y luego de vuelta a árboles. 
 union :: TreeBitSet -> TreeBitSet -> TreeBitSet
-union (TBS cap1 tree1) (TBS cap2 tree2) 
+union t1@(TBS cap1 tree1) t2@(TBS cap2 tree2)
     | cap1 /= cap2 = error "sets have different capacities"
-    |otherwise = (TBS cap1 (ortree tree1 tree2)) 
-
-ortree :: Tree -> Tree -> Tree 
-ortree (Leaf l1) (Leaf l2) = Leaf (IntBits.bitwiseOr l1 l2)
-ortree (Node left1 right1) (Node left2 right2) = Node (ortree left1 left2) (ortree right1 right2)
+    | otherwise = (TBS cap1 (uniriguales tree1 tree2)) 
+      where
+        uniriguales (Leaf l1) (Leaf l2) = (Leaf (IntBits.bitwiseOr l1 l2))
+        uniriguales (Node left1 right1) (Node left2 right2) = (Node (uniriguales left1 left2) (uniriguales right1 right2))
 
 
 -- | Función para realizar la unión extendida de dos TreeBitSets
@@ -222,12 +222,16 @@ ortree (Node left1 right1) (Node left2 right2) = Node (ortree left1 left2) (ortr
 --vuelta a árboles.
 
 extendedUnion :: TreeBitSet-> TreeBitSet-> TreeBitSet
-extendedUnion (TBS cap1 tree1) (TBS cap2 tree2) = (TBS (max cap1 cap2 ) (ordifrees tree1 cap1 tree2 cap2))
+extendedUnion (TBS c1 t1) (TBS c2 t2) 
+    | c1 > c2 = (TBS c1 (ordifrees t1 c1 t2 c2))
 
 ordifrees :: Tree -> Int -> Tree -> Int -> Tree
-ordifrees (Leaf b1) cap1 (Leaf b2) cap2 = Leaf (IntBits.orExtended b1 b2 cap1 cap2)
-ordifrees (Node left1 right1) cap1 (Node left2 right2) cap2  = 
-  Node ( ordifrees left1 cap1 left2 cap2) (ordifrees right1 cap1 right2 cap2)
+ordifrees (Leaf l1) c1 (Leaf l2) c2 = (Leaf (IntBits.orExtended l1 l2 c1 c2))
+ordifrees (Node l1 r1) c1 (Node l2 r2) c2 = ( Node (ordifrees l1 mitad1 l2 mitad2) (ordifrees r1 mitad1 r2 mitad2) )
+      where 
+         mitad1 = c1 `div` 2
+         mitad2 = c2 `div` 2
+
 
 -- =========================================
 
