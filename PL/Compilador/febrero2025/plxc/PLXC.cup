@@ -1,0 +1,563 @@
+import java_cup.runtime.*;
+import java.text.ParseException;
+import java.util.List;
+import java.util.ArrayList;
+
+parser code {:
+
+
+    public void syntax_error(Symbol cur_token) {;}
+
+    public void unrecovered_syntax_error(Symbol cur_token) {
+        System.err.println("Syntax Error. Línea: " + PLXC.lex.getLine() + " Columna: " + PLXC.lex.getColumn());
+        PLXC.out.println("# Syntax Error");
+        PLXC.out.println("error;");
+        PLXC.out.println("halt;");
+    }
+:}
+
+action code {:
+
+    TablaSimbolos tabla;
+
+    Integer bloqueActual;
+    Integer idBloque;
+
+:}
+
+init with {:
+
+    //TABLA DE SIMBOLOS;
+    action_obj.tabla = new TablaSimbolos();
+    //BLOQUE DONDE ESTOY
+    action_obj.bloqueActual = 0; 
+    //CONTADOR DE BLOQUES
+    action_obj.idBloque = 0;
+:}
+
+/* TERMINALES */
+
+
+//TIPOS
+terminal String IDENT;
+terminal INT, CHAR, FLOAT, BOOLEAN;
+terminal Integer ENTERO, CARACTER;
+terminal Float REAL;
+terminal CAST;
+
+//true false:
+terminal String BOOLFALSE, BOOLTRUE;
+
+//PARENTESIS,CORCHETES, IGUALES,ETC..
+terminal ALL, CLL, AP, CP, ASIG, COMA, PYC;
+
+//OPERACIONES
+terminal MAS, MENOS, MULT, DIV, MOD;
+terminal MASMAS, MENOSMENOS;
+terminal UNARIO;
+//OPERACIONES EXAMEN 2025------------------: 
+terminal DESPIZQ, DESPDER;
+
+//COMPARACIONES
+terminal MENOR, MENORIGUAL, MAYOR, MAYORIGUAL, IGUAL, DIST;
+
+//FUNCIONESE
+terminal IF, ELSE, FOR, DO, WHILE, PRINT;
+//2025-------------------------------------------------------------
+terminal REPEAT, TIMES;
+
+terminal WHERE, DEFAULT, FIRST, LAST, SELECT, FROM, TO, STEP;
+//-----------------------------------------------------------------------
+//LOGICA
+terminal AND, OR, NOT, IMPLICACION, NAND , XOR;
+//FORALL
+terminal FORALL;
+
+/* NO TERMINALES */
+
+//2025: select from:-----
+non terminal SentSelectFrom select;
+non terminal Instruccion def;
+non terminal Instruccion step;
+non terminal List<SentSelectFrom> select_list;
+non terminal Boolean select_dir;
+
+
+//---------------------------------------
+
+non terminal Bloque lista_sentencias; 
+non terminal Instruccion sentencia; 
+non terminal Instruccion exp;
+non terminal Instruccion begin_for, condicion_for, act_for;
+
+non terminal Integer bloque_begin;
+
+non terminal ListaVar lista_declaracion;
+
+non terminal Tipo tipo;
+
+non terminal String op_mult, op_aditivo, op_relacional, op_unario, op_unario_after;
+
+non terminal Literal literal;
+
+/* PRECEDENCIA */
+
+precedence left AP, CP;
+precedence left SELECT;  //-------------2025
+precedence left ELSE;
+precedence left COMA;
+precedence right ASIG;
+precedence left DESPIZQ, DESPDER;  //---------------2025
+precedence right IMPLICACION;
+precedence left OR;
+precedence left XOR;
+precedence left AND;
+precedence left NAND;
+precedence nonassoc NOT;
+precedence left MAYOR, MAYORIGUAL, MENOR, MENORIGUAL, IGUAL, DIST;
+precedence left MAS, MENOS;
+precedence left MULT, DIV, MOD;
+precedence nonassoc CAST;
+precedence nonassoc UNARIO, MASMAS, MENOSMENOS;
+
+
+
+/* GRAMÁTICA */
+
+//-------LISTA SENTENCIAS---------DEVUELVE UN BLOQUE------------------------------------------------------------
+lista_sentencias ::=  lista_sentencias:b sentencia:s
+                {:
+                    b.add(s);
+                    RESULT = b;
+                :}
+            |   sentencia:s
+                {:
+                    Bloque b = new Bloque(PLXC.lex.getLine());
+                    b.add(s);
+                    RESULT = b;
+                :}
+            ;
+
+//-----------SENTENCIA------------ -----------------------------------------------------
+sentencia    ::= lista_declaracion:l PYC
+            {:
+                RESULT = l;
+            :}
+//SENTENCIA REPEAT:-----TIMES
+        |  REPEAT sentencia:s exp:e TIMES PYC
+            {:
+            
+                RESULT = new SentREPEAT(PLXC.lex.getLine(),e,s);
+                
+            :}
+
+
+//EXP ; 
+        |   exp:e PYC
+            {:
+                RESULT = e;
+            :}
+
+//SELECT   X   FROM   X    WHERE---------------------------------------------------------------------
+       
+
+//--------------------------------------------------------------------------------------------------------------
+
+//SENTENCIA FOR:
+        |   FOR bloque_begin:bloqueAnterior AP begin_for:i PYC condicion_for:c PYC act_for:a CP sentencia:s
+            {:
+                tabla.eliminarBloque(bloqueActual);
+                bloqueActual = bloqueAnterior;
+                RESULT = new SentFORC(PLXC.lex.getLine(), i, c, a, s);
+            :}
+//SENTENCIA WHILE:
+        |   WHILE AP exp:e CP sentencia:s
+            {:
+                RESULT = new SentWHILE(PLXC.lex.getLine(), e, s);
+            :}
+//SENTENCIA DO WHILE:
+        |   DO sentencia:s WHILE AP exp:e CP PYC
+            {:
+                RESULT = new SentDOWHILE(PLXC.lex.getLine(), e, s);
+            :}
+//SENTENCIA IF:
+        |   IF AP exp:e CP sentencia:s
+            {:
+                RESULT = new SentIF(PLXC.lex.getLine(), e, s, null);
+            :}
+//SENTENCIA IF X ELSE Y
+        |   IF AP exp:e CP sentencia:s1 ELSE sentencia:s2
+            {:
+                RESULT = new SentIF(PLXC.lex.getLine(), e, s1, s2);
+            :}
+//PRINT
+        |   PRINT exp:e PYC 
+            {:
+                RESULT = new LlamadaMetodo(
+                    PLXC.lex.getLine(),
+                    e,
+                    Metodo.MOSTRAR,
+                    null
+                );
+            :}
+//  {
+        |   ALL bloque_begin:bloqueAnterior lista_sentencias:l CLL 
+            {:
+                tabla.eliminarBloque(bloqueActual);
+                bloqueActual = bloqueAnterior; // Vuelvo al bloque anterior
+
+                RESULT = l;
+            :}
+
+        |   PYC
+        ;
+
+//-------------------SELECT_LIST--------------------------------------------
+select_list ::= select_list:l select:s  //clean??
+                {:
+                    l.add(s);
+                    RESULT = l;
+                :}
+            |   select:s
+                {:
+                    List<SentSelectFrom> list = new ArrayList<>();
+                    list.add(s);
+                    RESULT = list;
+                :}
+            ;
+
+select      ::= SELECT select_dir:first IDENT:id FROM exp:from TO exp:to step:st def:df 
+                {:
+                    Objeto obj = tabla.buscar(id);
+                    Variable var = (Variable) obj;
+                    RESULT = new SentSelectFrom(PLXC.lex.getLine(),var,first,from,to,st,df);
+                    
+                :}
+            ;
+step        ::= STEP exp:e  {: RESULT = e; :}
+            |               {: Literal l = new Literal(bloqueActual,TipoInt.instancia,1); 
+                                RESULT = new ExpLiteral(PLXC.lex.getLine(),l);
+                            :}
+            ;
+select_dir  ::=  FIRST {: RESULT= true; :}
+            |   LAST  {: RESULT= false; :}
+            |       {: RESULT= true;  :}
+            ;
+def     ::= DEFAULT exp:e {: RESULT = e; :}
+            |   {:  Literal none = new Literal(bloqueActual, TipoInt.instancia,0);
+                    RESULT = new ExpLiteral(PLXC.lex.getLine(), none); 
+                :}
+            ;
+
+//---------------------------------------------------------------------------------------------------
+
+
+
+//-----------PARA CONTROLAR EL FOR   -----------------------------------------------------------------
+begin_for  ::= lista_declaracion:l {: RESULT = l; :}
+            |   exp:e               {: RESULT = e; :}
+            |
+            ;
+//----------------------------------------------------------------------------
+condicion_for    ::= exp:e {: RESULT = e; :}
+            |
+            ;
+//----------------------------------------------------------------------------
+act_for     ::= exp:e {: RESULT = e; :}
+            |
+            ;
+//----------------------------------------------------------------------------
+bloque_begin ::= 
+{:
+    RESULT = bloqueActual; // Guardo el bloque en el que estaba
+    idBloque++;
+    bloqueActual = idBloque;
+:}
+;
+//----------LISTA DE DECLARACION, DEVOLVEMOS UNA LISTA VAR(int linea, Tipo tipo)  ------------------------------------------------------------------
+lista_declaracion   ::= tipo:t IDENT:i
+                        {:
+                            Variable v = new Variable(i, bloqueActual, true, t);
+                            tabla.declararVariable(PLXC.lex.getLine(), v);
+                            RESULT = new ListaVar(PLXC.lex.getLine(), t);
+                        :}
+
+                    // TIPO ID =
+                    |   tipo:t IDENT:i ASIG exp:e
+                        {:
+                            Variable v = new Variable(i, bloqueActual, true, t);
+                            tabla.declararVariable(PLXC.lex.getLine(), v);
+
+                            ListaVar l = new ListaVar(PLXC.lex.getLine(), t);
+                            l.add(
+                                new LlamadaMetodo(
+                                    PLXC.lex.getLine(),
+                                    new ExpVariable(PLXC.lex.getLine(), v),
+                                    Metodo.CREAR_VARIABLE,
+                                    new Instruccion[]{e}
+                                )
+                            );
+
+                            RESULT = l;
+                        :}
+                    // DECL , ID 
+                    |   lista_declaracion:l COMA IDENT:i
+                        {:
+                            Variable v = new Variable(i, bloqueActual, true, l.getTipo());
+                            tabla.declararVariable(PLXC.lex.getLine(), v);
+                            RESULT = l;
+                        :}
+
+                    //DECL , ID = EXP
+                    |   lista_declaracion:l COMA IDENT:i ASIG exp:e
+                        {:
+                            Variable v = new Variable(i, bloqueActual, true, l.getTipo());
+                            tabla.declararVariable(PLXC.lex.getLine(), v);
+
+                            l.add(
+                                new LlamadaMetodo(
+                                    PLXC.lex.getLine(),
+                                    new ExpVariable(PLXC.lex.getLine(), v),
+                                    Metodo.CREAR_VARIABLE,
+                                    new Instruccion[]{e}
+                                )
+                            );
+
+                            RESULT = l;
+                        :}
+                    ;
+
+//-------------EXP DEVUELVE UN  EXPLITERAL (int linea, Literal l)---------------------------------------------------------------
+exp ::= literal:l 
+        {:
+            RESULT = new ExpLiteral(PLXC.lex.getLine(), l);            
+        :}
+    //ID
+    |   IDENT:i
+        {:
+            Objeto obj = tabla.buscar(i);
+
+            if(obj == null) {
+                throw new ParseException("Variable <" + i + "> no fue declarada", PLXC.lex.getLine());
+            }
+
+            RESULT = new ExpVariable(PLXC.lex.getLine(), (Variable) obj);
+        :}
+    |   select_list:l WHERE exp:e 
+            {:
+                //System.out.println("hols");
+                String fin = Objeto.newEtiqueta();
+                for (int i=0;i<l.size();i++){
+
+                    SentSelectFrom f = l.get(i);
+                    if(i>0){
+                        f.setPreStartTag(l.get(i-1).getStartTag());
+                    }
+                    if(i<l.size()-1){
+                        SentSelectFrom next = l.get(i+1);
+                        f.setBody(next);
+                        f.setNextDefaultTag(next.getDefaultTag());
+                    }else{
+                        f.setBody(e);
+                    }
+                    f.setFinalTag(fin);
+                }
+                RESULT = l.get(0);
+            :}
+    //ID = EXP
+    |   IDENT:i ASIG exp:e
+        {:
+            Objeto obj = tabla.buscar(i);
+
+            if(obj == null) {
+                throw new ParseException("Variable <" + i + "> no fue declarada", PLXC.lex.getLine());
+            }
+
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                new ExpVariable(PLXC.lex.getLine(), (Variable) obj),
+                Metodo.ASIGNAR,
+                new Instruccion[]{e}
+            );
+        :}
+
+        //EXAMEN FINAL   DESPLAZAMIENTOS:----------------------------------------
+    | exp: e1  DESPDER exp:e2   
+        {:
+            
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e1,
+                Metodo.DESPDERECHA,
+                new Instruccion[]{e2}
+            );
+        :} %prec DESPDER
+     | exp: e1  DESPIZQ exp:e2   
+        {: 
+           
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e1,
+                Metodo.DESPIQUIERDA,
+                new Instruccion[]{e2}
+            );
+        :} %prec DESPIZQ
+
+        //------------------------------------------------
+    //SUMA Y RESTA
+    |   exp:e1 op_aditivo:op exp:e2
+        {:
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e1,
+                op,
+                new Instruccion[]{e2}
+            );
+        :} %prec MAS
+
+    //DIVISION,MULTIPLICACION, MODULO
+    |   exp:e1 op_mult:op exp:e2
+        {:
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e1,
+                op,
+                new Instruccion[]{e2}
+            );
+        :} %prec MULT
+    //COMPARADORES:
+    |   exp:e1 op_relacional:op exp:e2
+        {:
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e1,
+                op,
+                new Instruccion[]{e2}
+            );
+        :} %prec IGUAL
+//IMPLICACION -->
+    | exp:e1 IMPLICACION exp: e2
+        {:  
+            RESULT = new LlamadaMetodo(PLXC.lex.getLine(), e1, Metodo.IMPLICACION, new Instruccion[]{e2});
+        :}
+
+//NAND
+    |   exp:e1 NAND exp:e2
+        {:  
+            RESULT = new LlamadaMetodo(PLXC.lex.getLine(), e1, Metodo.NAND, new Instruccion[]{e2});
+        :}
+//AND
+    |   exp:e1 AND exp:e2
+        {:
+            RESULT = new CortoCircuito(
+                PLXC.lex.getLine(),
+                e1,
+                Metodo.AND,
+                e2
+            );
+        :}
+//XOR
+    |   exp:e1 XOR exp:e2
+        {:  
+            RESULT = new LlamadaMetodo(PLXC.lex.getLine(), e1, Metodo.XOR, new Instruccion[]{e2});
+        :}
+//OR
+    |   exp:e1 OR exp:e2
+        {:
+            RESULT = new CortoCircuito(
+                PLXC.lex.getLine(),
+                e1,
+                Metodo.OR,
+                e2
+            );
+        :}
+//NOT
+    |   NOT exp:e
+        {:
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e,
+                Metodo.NOT,
+                null
+            );
+        :}
+// -  ++  --
+    |   op_unario:op exp:e
+        {:
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e,
+                op,
+                null
+            );
+        :} %prec UNARIO
+
+    |   exp:e op_unario_after:op
+        {:
+            RESULT = new copiavariableYLlama(
+                PLXC.lex.getLine(),
+                e,
+                op,
+                null
+            );
+        :} %prec MASMAS
+//  ( EXP )
+    |   AP exp:e CP
+        {:
+            RESULT = e;
+        :}
+// ( TIPO )   [ CASTING
+    |   AP tipo:t CP exp:e
+        {:
+            ExpTipo et = new ExpTipo(PLXC.lex.getLine(), t);
+            RESULT = new LlamadaMetodo(
+                PLXC.lex.getLine(),
+                e,
+                Metodo.CAST,
+                new Instruccion[]{et}
+            );
+        :} %prec CAST
+    ;
+
+
+//---SUMA Y RESTA-------------------------------------------------------------------------
+op_aditivo  ::= MAS     {: RESULT = Metodo.SUMA; :}
+            |   MENOS   {: RESULT = Metodo.RESTA; :}
+            ;
+
+//-------MULT DIV MOD---------------------------------------------------------------------
+op_mult ::= MULT    {: RESULT = Metodo.PRODUCTO; :}
+        |   DIV     {: RESULT = Metodo.DIVISION; :}
+        |   MOD     {: RESULT = Metodo.MODULO; :}
+        ;
+//------COMPARADORES----------------------------------------------------------------------
+op_relacional  ::= MENOR       {: RESULT = Metodo.MENOR; :}
+                |   MENORIGUAL  {: RESULT = Metodo.MENOR_IGUAL; :}
+                |   MAYOR       {: RESULT = Metodo.MAYOR; :}
+                |   MAYORIGUAL  {: RESULT = Metodo.MAYOR_IGUAL; :}
+                |   IGUAL       {: RESULT = Metodo.IGUAL; :}
+                |   DIST        {: RESULT = Metodo.DISTINTO; :}
+                ; 
+//----------UNARIOS------POR DELANTE DEL NUM  (UNARIO) NUM ------------------------------------------------------------
+op_unario   ::= MENOS       {: RESULT = Metodo.OPUESTO; :}
+            |   MASMAS      {: RESULT = Metodo.SIGUIENTE; :}
+            |   MENOSMENOS  {: RESULT = Metodo.ANTERIOR; :}
+            ;
+//-------------UNARIO POR DETRAS:  NUM (UNARIO)---------------------------
+op_unario_after  ::= MASMAS       {: RESULT = Metodo.SIGUIENTE; :}
+                |   MENOSMENOS   {: RESULT = Metodo.ANTERIOR; :}
+                ;
+//--------------TIPOS--------------------------------------------------------------
+tipo    ::= INT     {: RESULT = TipoInt.instancia; :}
+        |   CHAR    {: RESULT = TipoChar.instancia; :}
+        |   FLOAT   {: RESULT = TipoReal.instancia; :}
+        |   BOOLEAN    {: RESULT = TipoBool.instancia; :}
+        ;
+//--------------LITERALES--------------------------------------------------------------
+//------------------DEVUELVEN   UN LITERAL (int bloque, Tipo tipo, Object valor)--------------------------
+literal ::= ENTERO:e    {: RESULT = new Literal(bloqueActual, TipoInt.instancia, e); :}
+        |   CARACTER:c  {: RESULT = new Literal(bloqueActual, TipoChar.instancia, c); :}
+        |   REAL:r      {: RESULT = new Literal(bloqueActual, TipoReal.instancia, r); :}
+        |   BOOLTRUE:b    {: RESULT = new Literal(bloqueActual, TipoBool.instancia, Integer.valueOf("1")); :}
+        |   BOOLFALSE:b    {: RESULT = new Literal(bloqueActual, TipoBool.instancia, Integer.valueOf("0")); :}
+        ;
