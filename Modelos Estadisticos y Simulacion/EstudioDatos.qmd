@@ -1,0 +1,441 @@
+---
+title: "Fraudes de Transacciones bancarias"
+format: html
+editor: visual
+---
+
+# Carga de datos
+
+```{r}
+#library(patchwork)
+library(tidyr)
+library(tidyverse)
+library(ggplot2)
+library(hms) #para las horas
+#cargamos la BD:
+Bank_Transaction_Fraud_Detection <- read.csv("D:/github/university/Modelos Estadisticos y Simulacion/Test de carga de datos/Bank_Transaction_Fraud_Detection.csv")
+#para verla:
+View(Bank_Transaction_Fraud_Detection)
+
+class(Bank_Transaction_Fraud_Detection) #data.frame
+
+
+
+```
+
+# Datos Relevantes
+
+**Variables numéricas:**
+
+-   is_fraud (int) : cuantitativa discreta, valor binario \
+    (0: no es fraude 1: es fraude)
+
+-   Transaction Amount (num) : cuantitativa continua
+
+**Variables no numéricas(chr):**
+
+-   State (chr) -categorica
+
+-   Device type -categorica
+
+-   Bank branch(sucursal bancaria) -categorica
+
+-   Transaction type - categorica
+
+-   Account balance -
+
+**Tipo date:**
+
+-   Transaction_Date
+
+**Tipo time:**
+
+-   Transaction_Time\
+
+# Estructuración de datos
+
+```{r}
+#cambiamos date a tipo date 
+df<-Bank_Transaction_Fraud_Detection
+df$Transaction_Date <- as.Date(df$Transaction_Date, format= "%d-%m-%Y")
+#cambiamos las horas
+df$Transaction_Time <- as_hms(df$Transaction_Time)
+df <- Bank_Transaction_Fraud_Detection
+
+#si hay valores sin nada les pone NA
+NA_adder <- function(df) {
+  df[df == ""] <- "NA"
+  return(df)
+}
+
+df<-NA_adder(df)
+
+#vamos a ver si faltan valores
+colSums(is.na(df))
+
+colnames(df)
+#vamos a convertir los valores categoricos a factores:
+
+#State:
+df$State <- as.factor(df$State)
+#device_type
+df$Device_Type <- as.factor(df$Device_Type)
+#bank branch
+df$Bank_Branch<- as.factor(df$Bank_Branch)
+#transaction_type
+df$Transaction_Type <- as.factor(df$Transaction_Type)
+#transaction_amount
+df$Transaction_Amount <- as.factor(df$Transaction_Amount)
+
+```
+
+# Análisis descriptivo numérico de datos
+
+```{r}
+
+fraud<-df$Is_Fraud
+class(fraud)#integer
+
+#estructura de las variables:
+str(df)
+summary(df)
+
+
+
+
+```
+
+# Análisis Descriptivo gráfico de datos
+
+## Is_Fraud (int)
+
+Diagrama de Barras:
+
+```{r}
+fraud<-df$Is_Fraud
+class(fraud)#integer
+
+#cuantas variables son fraude y cuantas no:
+table(fraud)
+#proporcion de ese dato:
+prop.table(table(fraud))
+
+#calculamos las proporciones antes porque after_stat(prop) se comporta raro con el coloreo:
+fraud_df <- fraud %>%
+  table() %>%
+  prop.table() %>%
+  as.data.frame()
+colnames(fraud_df) <- c("fraud", "prop")
+
+
+#proporcion:
+ggplot(fraud_df, aes(x = fraud, y = prop, fill = fraud)) +
+  geom_col(color = "black") +  
+  scale_fill_manual(values = c("0" = "chartreuse", "1" = "darkorchid")) +
+  labs(title = "Proporcion de Fraudes", x = "¿Es Fraude?", y = "Proporcion") +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.05)) + 
+  theme_minimal()
+
+# Conteo con colores específicos
+fraud %>%
+  data.frame() %>%
+  ggplot(aes(x = fraud, fill = as.factor(fraud))) +
+  geom_bar(color = "black") +  
+  scale_fill_manual(values = c("0" = "chartreuse", "1" = "darkorchid")) +
+  scale_y_continuous(breaks = seq(0, max(table(fraud)), #de 0 al max
+                                  by = round(max(table(fraud))/17  ))) +  #8 trozos
+  labs(title = "Conteo de Fraudes", x = "¿Es Fraude?", y = "Frecuencia") +
+  theme_minimal()
+```
+
+## State (chr)
+
+Diagrama de Barras:
+
+```{r}
+state<-df$State
+class(state) #character
+#recuento de diferentes estados:    
+table(state)  
+#proporcion de ese dato:
+prop.table(table(state))
+
+length(unique(state)) #34 estados..muchos estados para ponerlos en diagramas solos
+
+#fraudes por cada estado 
+table(state, fraud)
+
+
+```
+
+## Device_Type (chr)
+
+Diagrama de Barras:
+
+```{r}
+
+dev<- df$Device_Type
+class(dev)#character
+#Recuento y proporción de tipos de dispositivos
+table(dev)  
+prop.table(table(dev))
+
+length(unique(dev)) #4
+
+#fraude por tipo de dispositivo
+table(dev, fraud)
+
+
+dev_df <- dev %>%
+  table() %>%
+  prop.table() %>%
+  as.data.frame()
+colnames(dev_df) <- c("dev", "prop")
+
+
+ggplot(dev_df, aes(x = dev, y = prop, fill = dev)) +
+  geom_col(color = "black") + 
+  labs(title = "Proporción de Tipos de Dispositivos", x = "Tipo de Dispositivo", y = "Proporción") +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.02)) + 
+  theme_minimal()
+```
+
+```{r}
+
+#Crear data frame con proporciones
+dev_df <- dev %>%
+  table() %>%
+  prop.table() %>%
+  as.data.frame()
+colnames(dev_df) <- c("dev", "prop")
+
+#Gráfico de proporción de dispositivos
+ggplot(dev_df, aes(x = dev, y = prop, fill = dev)) +
+  geom_col(color = "black") + 
+  labs(title = "Proporción de Tipos de Dispositivos", x = "Tipo de Dispositivo", y = "Proporción") +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.02)) + 
+  theme_minimal()
+
+
+#Conteo
+dev %>%
+  data.frame() %>%
+  ggplot(aes(x = dev, fill = as.factor(dev))) +
+  geom_bar(color = "black") +  
+  scale_y_continuous(breaks = seq(0, max(table(dev)), #de 0 al max
+                                  by = round(max(table(dev))/17  ))) +  #8 trozos
+  labs(title = "Conteo de dispositivos", x = "Tipos", y = "Frecuencia") +
+  theme_minimal()
+```
+
+## Age (int) — podemos ignorarlo
+
+Diagrama de Barras:
+
+```{r}
+age<-df$Age
+class(age)  #integer
+
+table(age)  
+prop.table(table(age))
+length(unique(age)) #53
+
+#Crear data frame con proporciones
+age_df <- age %>%
+  table() %>%
+  prop.table() %>%
+  as.data.frame()
+colnames(age_df) <- c("age", "prop")
+class(age_df$age) #factor
+age_df$age <- as.numeric(as.character(age_df$age))
+# Gráfico de proporción de edades
+
+ggplot(age_df, aes(x = age, y = prop, fill = as.factor(age))) +
+  geom_col(color = "black") +  
+  labs(title = "Proporción de Edades", x = "Edad", y = "Proporción") +
+  scale_fill_viridis_d() + 
+  theme_minimal() +
+  theme(legend.position = "none") 
+
+# Gráfico de conteo de edades
+ggplot(data.frame(age), aes(x = age, fill = as.factor(age))) +
+  geom_bar(color = "black") +  
+  scale_fill_viridis_d() +  
+  scale_y_continuous(breaks = seq(0, max(table(age)), by = round(max(table(age))/17))) +  
+  labs(title = "Conteo de Edades", x = "Edad", y = "Frecuencia") +
+  theme_minimal() +
+  theme(legend.position = "none") 
+
+```
+
+Funcion de distribucion muestral:
+
+```{r}
+
+age %>%
+   data.frame() %>%
+   ggplot() +
+   stat_ecdf(aes(x=age))
+```
+
+Funcion de densidad:
+
+```{r}
+
+age %>%
+ data.frame() %>%
+ ggplot() +
+ geom_density(aes(x=age), kernel = "gaussian", bw = 3)
+```
+
+\
+
+## Transaction_Currency (chr)
+
+```{r}
+cur<-df$Transaction_Currency
+class(cur)  #char
+
+table(cur)  
+prop.table(table(cur))
+
+length(unique(cur)) #1   solo hay un currency
+
+```
+
+## Bank Branch
+
+```{r}
+bank<-df$Bank_Branch
+
+class(bank)#character
+#Recuento y proporción de genero
+table(bank)  
+prop.table(table(bank))
+
+length(unique(bank)) #141 (muchos...)
+
+#Crear data frame con proporciones
+bank_df <- bank %>%
+  table() %>%
+  prop.table() %>%
+  as.data.frame()
+colnames(bank_df) <- c("bank", "prop")
+
+#Gráfico de proporción de dispositivos
+ggplot(bank_df, aes(x = bank, y = prop, fill =bank)) +
+  geom_col(color = "black") + 
+  labs(title = "Proporción de Bancos", x = "Bancos", y = "Proporción") +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.02)) + 
+  theme_minimal() +
+   theme(legend.position = "none") 
+
+
+#Conteo
+bank %>%
+  data.frame() %>%
+  ggplot(aes(x = bank, fill = as.factor(bank))) +
+  geom_bar(color = "black") +  
+  scale_y_continuous(breaks = seq(0, max(table(bank)), #de 0 al max
+                                  by = round(max(table(bank))/10  ))) +  
+  labs(title = "Conteo de Bancos", x = "Bancos", y = "Frecuencia") +
+  theme_minimal() +
+   theme(legend.position = "none") 
+
+```
+
+## Transaction type
+
+```{r}
+tipe<-df$Transaction_Type
+
+class(tipe)#character
+#Recuento y proporción de genero
+table(tipe)  
+prop.table(table(tipe))
+
+length(unique(tipe)) #5
+
+#Crear data frame con proporciones
+tipe_df <- tipe %>%
+  table() %>%
+  prop.table() %>%
+  as.data.frame()
+colnames(tipe_df) <- c("tipo", "prop")
+tipe_df
+#Gráfico de proporción de dispositivos
+ggplot(tipe_df, aes(x = tipo, y = prop, fill =tipo)) +
+  geom_col(color = "black") + 
+  labs(title = "Proporción de tipe", x = "tipes", y = "Proporción") +
+  scale_y_continuous(breaks = seq(0, 1, by = 0.02)) + 
+  theme_minimal() +
+   theme(legend.position = "none") 
+
+
+#Conteo
+tipe %>%
+  data.frame() %>%
+  ggplot(aes(x = tipe, fill = as.factor(tipe))) +
+  geom_bar(color = "black") +  
+  scale_y_continuous(breaks = seq(0, max(table(tipe)), #de 0 al max
+                                  by = round(max(table(tipe))/10  ))) +  
+  labs(title = "Conteo de tipe", x = "tipe", y = "Frecuencia") +
+  theme_minimal() +
+   theme(legend.position = "none") 
+
+```
+
+## Transaction Amount(num)
+
+```{r}
+
+mount<-df$Transaction_Amount
+class(mount)  #numeric
+
+#table(mount)  
+#prop.table(table(mount))
+length(unique(mount)) #197978    diagrama de barras nope
+
+#Diagrama de densidad:
+
+mount %>%
+ data.frame() %>%
+ ggplot() +
+ geom_density(aes(x=mount), kernel = "gaussian", bw = 50)
+```
+
+# Transaction_Date
+
+```{r}
+
+
+
+```
+
+# Fraude por Variable
+
+```{r}
+
+#state
+table(state,fraud)
+
+#device_type
+table(dev,fraud)
+
+#age
+table(age,fraud)
+#gender
+table(gender,fraud)
+
+#banco
+table(bank,fraud)
+
+#tipo de transaccion
+table(tipe,fraud)
+
+#localizacion
+loc<-df$Transaction_Location
+length(unique(loc)) #148
+table(loc,fraud)
+
+```

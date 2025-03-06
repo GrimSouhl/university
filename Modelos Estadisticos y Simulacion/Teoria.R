@@ -70,8 +70,25 @@ help("dplyr")
 #^f(x)=(1/2*h)P(x-h<= X <= x+h)
 #En conclusion hay que elegir un KERNEL(funcion continua) y un parámetro h
 #contra mas grande el h mas suave se ven los datos, a menos h mas picos tiene
+#h: bandwidth
+#si asumo que mis datos son gaussianos, puedo asumir una determinada h
 
+#Dos tipos de f, f gorrito y f teorica, la f teorica la asumimos para sacar la h junto con 
+#la f gorrito
+#---------------------
+#Diagrama de caja y bigotes
 
-#diagrama de caja y bigotes
+#                  _____________
+#                 /             \  <--Gaussiana
+#         _______/               \
+#        /         _____________       IQR = Q3 - Q1
+#  _____          |     |      |
+#Q1-1,5*2QR|------|     |      |---------| Q3+1,5*IQR
+#                 |_____|______|
+#                Q1      Q2    Q3  
+x<-rnorm(20,mean=5,sd=1)
+boxplot(x)
+
+#Los diagramas de violín dependeran de la densidad kernel que se ponga
 
 
