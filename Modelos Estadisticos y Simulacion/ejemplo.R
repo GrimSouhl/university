@@ -1,3 +1,4 @@
+##TEMA 1
 #EJEMPLO 1
 #generamos una mueestra:
 x <- rnorm(20,mean=5,sd=1)
@@ -46,10 +47,22 @@ median(x)
 mean(x_contaminada)
 median(x_contaminada)
 
+##tema2
+help(runif)
+help(rnorm)
+#mean:modificamos la pos,todos los numeros estaran alrededor de mean
+#sd: modificamos la dispersion
 
 
+sample(1:6,10, replace=TRUE)
+table(sample(1:6,100, replace=TRUE,prob=c(0.1,0.2,0.3,0.4,0.5,0.6))) #tabla de frecuencia relativa
+#prob: la probabilidad de q salga cada numero
 
+help(replicate)
 
-
-
-
+library(manipulate)
+help(manipulate)
+manipulate(
+  hist(runif(n,min=10,max=15)),
+  n = slider(5,10)
+)

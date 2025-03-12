@@ -27,7 +27,7 @@ class(Bank_Transaction_Fraud_Detection) #data.frame
 
 **Variables numéricas:**
 
--   is_fraud (int) : cuantitativa discreta, valor binario \
+-   is_fraud (int) : cuantitativa discreta, valor binario\
     (0: no es fraude 1: es fraude)
 
 -   Transaction Amount (num) : cuantitativa continua

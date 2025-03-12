@@ -1,5 +1,5 @@
 library(tidyverse)
-
+####TEMA 1 APUNTES
 ##Posit cheatsheets en la pagina de Posit de RStudio para atajos de librerias importantes
 
 ##quarto web -> queda guay
@@ -90,5 +90,51 @@ x<-rnorm(20,mean=5,sd=1)
 boxplot(x)
 
 #Los diagramas de violín dependeran de la densidad kernel que se ponga
+
+
+####TEMA 2:NUMEROS ALEATORIOS Y SIMULACIÓN: APUNTES
+
+#Necesitamos vectores aleatorios
+#numeros aleatorios puros: son los meramente aleatorios, sin reglas o planes
+#cuasio-aleatorios
+#pseudo-aleatorios <-los que vamos a usar nosotros
+#ejemplo:
+#U~Uniforme(a=0,b=1) 
+#a:principio   b:final  los valores estan entre esos valores
+#dentro de esa caja la prob de tener 0,2 0,5 es la misma (distribucion uniforme)
+
+#generacion por congruencias:
+#importante el tema de la semilla en generacion por congruencias
+#para replicar modelos y poder obtener mismos resultados fijamos la semilla
+#a,c,m se pueden no tocar,dejarlos como estan
+
+#---------------------para variables discretas------------------------------------
+#Distribucion uniforme en (0,1)
+#P(U<=u)=P(u)
+
+#definir variable aleatoria
+
+#en variables continuas usamos intervalos
+
+#probabilidad de Bernoulli:
+#P(X=x) = p^x  *  (1-p)^1-x           x: 0 o 1        
+#ejemplo:
+#y~Bin(n,p)    n:numero de veces que repito la extraccion
+#posibles resultados: (x1,x2) (1,1)  (1,0)  (0,1)  (0,0)
+#P(y=0) = (1-p)^2                             [0 exitos]
+#P(y=1) = p*(1-p) + (1-p)+p = 2*(p*(1-p))     [1 exito ]
+#P(y=2) = p^2                                 [2 exitos]
+
+#Simulacion de la distribucion geometrica:
+#realizamos tantas pruebas independientes de bernoulli hasta que encontramos un éxito
+#y es el número de fracasos hasta que obtenemos el primer éxito
+
+
+
+#Simulacion de la Binomial Negativa: numero de fracasos hasta conseguir n exitos
+#y=numero de fracasos hasta obtener n exitos
+
+#-----^estas distribuciones son para variables discretas------------------------------------------------------------------------
+
 
 
