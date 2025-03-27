@@ -1,0 +1,15 @@
+site: 
+  title: "Mi Sitio Web"
+  author: "Tu Nombre"
+  output: 
+    html:
+      theme: cosmo 
+  navbar:
+    right:
+      - text: "Inicio"
+        href: index.html
+      - text: "Tutoriales"
+        href: turoriales.html
+      - text: "Bank_Transaction"
+        href: bank_transaction.html
+  directory: "Estudio_files"

@@ -1,0 +1,243 @@
+---
+title: "Ejercicios Tema 2"
+format: html
+editor: visual
+---
+
+# Ejercicio 1.
+
+Sea (𝑋,𝑌) es un vector aleatorio con distribución uniforme en el cuadrado \[−1,1\]×\[−1,1\] de área 4.
+
+## 1. Aproximar mediante simulación 𝑃(𝑋+𝑌 ≤ 0) y compararla con la probabilidad teórica (obtenida aplicando la regla de Laplace área favorable área posible ).
+
+```{r}
+##correccion
+#a
+n<-100000
+x<- runif(n,-1,1)
+y<- runif(n,-1,1)
+
+prob_sim <- mean(x+y<=0)
+prob_sim
+
+prob_teorica<- 2/4
+prob_teorica
+
+
+#b
+
+prob_pi<- 4*mean( x^2 + y^2<=1)
+prob_pi
+
+
+```
+
+```{r}
+set.seed(123)
+
+n<- 10000 #numero de puntos a lanzar
+
+x<-runif(n,-1,1)
+y<-runif(n,-1,1)
+
+cumplen <- x+y<=0
+table(cumplen)
+prob_simulada<- mean(cumplen)
+prob_simulada
+
+#calculamos el area teorica ( area favorable/area posible)
+#el area posible es 4 
+#el area faborable es 2
+prob_teorica<- 2/4
+prob_teorica
+
+```
+
+## 2. Aproximar el valor de 𝜋 mediante simulación a partir de 𝑃(𝑋2 +𝑌2 ≤ 1).
+
+```{r}
+#Dentro del cuadrado, hay un círculo de radio 1. Si contamos cuántos puntos caen #dentro del círculo, podemos usar eso para estimar π.
+
+dentro_circulo <- x^2 + y^2 <= 1
+prob_circulo <- mean(dentro_circulo)
+
+#Como el área del cuadrado es 4, multiplicamos por 4 para estimar π
+pi_aproximado <- 4 * prob_circulo
+pi_aproximado
+
+```
+
+# Ejercicio 2.
+
+Consideramos el experimento de Bernoulli consistente en el lanzamiento de una moneda.
+
+## 1. Empleando la función sample, obtener 1000 simulaciones del lanzamiento de una moneda (0 = cruz, 1 = cara), suponiendo que no está trucada. Aproximar la probabilidad de cara a partir de las simulaciones.
+
+```{r}
+
+#n<- 1000
+monedas <- sample(c(0,1),size=1000,replace=TRUE)
+#si quisieramos cambiar la sprobabilidades:
+#monedas <- sample(c(0,1),size=1000,replace=TRUE, prob = c(0.1,0.2) )
+#contamos las veces que sale cara y lo dividimos por el total
+
+#table(monedas)/length(monedas)
+prob_cara <- mean(lanzamientos)
+prob_cara
+
+```
+
+## 2. En R pueden generarse valores de la distribución de Bernoulli mediante la función rbinom(nsim, size=1, prob). Generar un gráfico de lineas considerando en el eje 𝑋
+
+el número de lanzamientos (de 1 a 10000) y en el eje 𝑌 la frecuencia relativa del suceso cara (puede ser recomendable emplear la función cumsum)
+
+```{r}
+n<-10000
+##lanzamientos<-rbinom(n,size = 1, prob = 0.5)
+##lanzamientos
+
+seq_n<- 1:1000
+prob<- numeric(length =length(seq_n))
+for(i in 1:1000) {
+  lanzamientos <-sample(c(1,0),seq_n[i], replace=TRUE)
+  prob[i] <- mean(lanzamientos)
+}
+
+plot(seq_n,prob,type='l')
+
+library(ggplot2)
+
+##f_relativa<- cumsum(lanzamientos) /1:n 
+
+
+##plot(lanzamientos,f_relativa)
+```
+
+# Ejercicio 3.
+
+En 1651, el Caballero de Méré le planteó a Pascal una pregunta relacionada con las apuestas y los juegos de azar: ¿es ventajoso apostar a que en cuatro lanzamientos de un dado se obtiene al menos un seis? Este problema generó una fructífera correspondencia entre Pascal y Fermat que se considera, simbólicamente, como el nacimiento del Cálculo de Probabilidades.
+
+## 1. Escribir una función que simule el lanzamiento de 𝑛 dados. El parámetro de entrada es
+
+el número de lanzamientos 𝑛, que toma el valor 4 por defecto, y la salida debe ser TRUE si se obtiene al menos un 6 y FALSE en caso contrario.
+
+```{r}
+#CORRECCION
+replicas<- 1:1000
+iteracion_experimento<- numeric(length =length(replicas))
+for(i in 1:1000) {
+  lanzamientos <-sample(1:6,4, replace=TRUE)
+  iteracion_experimento[i] <- any(lanzamientos==6)
+}
+mean(iteracion_experimento)
+```
+
+```{r}
+
+simular_lanzamiento<- function(n=4) {
+  dados <- sample(1:6,size=n,replace=TRUE)
+  return(any(dados==6))
+}
+```
+
+## 2. Utilizar la función anterior para simular \$ nsim= 10000 \$ jugadas de este juego y calcular
+
+la proporción de veces que se gana la apuesta (obtener al menos un 6 en 𝑛 lanzamientos), usando 𝑛 = 4. Comparar el resultado con la probabilidad teórica 1 − (5/6)𝑛.
+
+```{r}
+#correccion
+
+results<- mean(replicate(1000, any(sample(1:6,4,replace=TRUE)==6)))
+results
+```
+
+```{r}
+
+nsim <- 10000
+
+results<- replicate(nsim, simular_lanzamiento())
+
+table(results)/length(results)
+prob_simulada<-
+prob_simulada
+prob_teorica<- 1 - (5/6)^4
+prob_teorica
+```
+
+# Ejercicio 4.
+
+Partiendo de la generación de números aleatorios uniformes en el intervalo \[0,1\], simule por el método de la transformada inversa las siguientes distribuciones:
+
+## 1. Distribución Uniforme: 𝑋 ∼ 𝑈\[𝑎,𝑏\] sabiendo que 𝑓𝑋 = 1/(𝑏 − 𝑎) y que 𝐹𝑋 = ∫𝑥𝑎𝑓𝑋𝑑𝑥. Compare el resultado con lo obtenido con la función runif.
+
+```{r}
+
+#tenemos la f, sacamos la F:
+#F= (x-a)/(b-a)
+#y= (x-a)/(b-a)
+# x = (b-a)*y+a
+#y=U~U(0,1)
+
+a<-10
+b<-100
+n<-10000
+U<- runif(n)
+unif_ab <- (b-a)*U+a
+
+hist(unif_ab)
+
+```
+
+## 2.Distribución Weibull: 𝑋 ∼ 𝑊𝑒𝑖𝑏𝑢𝑙𝑙(𝜆,𝛼) sabiendo que 𝐹𝑋(𝑥) = 1 − 𝑒−(𝜆𝑥)𝛼. Compare el resultado con lo obtenido con la función rweibull.
+
+```{r}
+#calculamos la inversa:
+#y = 1 - e^-((lambx)^alfa)
+#ln(1-y) = lamb*x ^ alfa
+#x = (ln(1-y)^1/alfa)*lamba
+
+lamba<-10
+alfa<-2
+n<-10000
+U<- runif(n)
+
+weibull<- (-log(1-U))^(1/alfa)*lamba
+
+hist(weibull)
+
+
+```
+
+## 3.Distribución Pareto: 𝑋 ∼ 𝑃𝑎𝑟𝑒𝑡𝑜(𝑎,𝑏) sabiendo que 𝐹𝑋(𝑥) = 1−(𝑏/𝑥)𝑎.
+
+```{r}
+
+#F=1- (b/x)*a
+#b/(y+1)/a = x
+n<-1000
+a<-10
+b<-5
+U<-runif(n)
+pareto<- (b/(U+1)*a) 
+hist(pareto)
+
+
+```
+
+RESUMEN Y QUE PUEDE CAER
+
+T1:
+
+-ANALISIS DESC -DATOS-\>HAZ ANALISIS DE DATOS
+
+-68
+
+-BOXPLOT
+
+-DIAPOSITIVA 70 (DATA FRAME CON VARIABLE A AGRUPAR)
+
+T2:
+
+-EJERS LIKE
+
+-NORMAL BIVARIADA SIMULAR DATOS SEGUN MATRIZ DE COVARIANZA

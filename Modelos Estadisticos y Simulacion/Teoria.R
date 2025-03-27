@@ -137,4 +137,86 @@ boxplot(x)
 #-----^estas distribuciones son para variables discretas------------------------------------------------------------------------
 
 
+#----------Ahora veremos como representar variables continuas
 
+#queremos simular una Variable X que es continua 
+#U~uniforme(0,1)   
+
+#METODO DE LA INVERSA
+#Si U~U(0,1)     X= F^(-1) (U) 
+#EJEMPLO:
+#nos tienen que dar la funcion de densidad,y la funcion acumulada
+#la inversa:
+#   y=1-e^(-Landam*x)
+#   ln(e^Landam*x) = ln(1-y)
+#   x = (ln(1-y))/Landam
+
+lamba <-2
+n<-10000
+x_exp <- -log(1-runif(n))/lamba
+x_exp
+
+plot(density(rexp(n,rate=lamba)))
+plot(density(x_exp))
+
+#METODO DE ACEPTACIÓN-RECHAZO
+#SIMULA UNA UNIFORME, TENEMOS QUE CONOCER LA F, LO Q SE HACE ES TIRAR NUMEROS ALEATORIOS AL CUADRADO Y VER SI ENTRAN DEBAJO DE LA DENSIDAD
+#MENOS RESTRICTIVO QUE EL OTRO
+
+
+#ESTRUCTURAS DE SIMULACIÓN
+# Distribución multivariada: queremos generar un vector
+
+normal_bivariada_independiente <- cbind(rnorm(1000), rnorm(1000,mean= 10, sd= 2))
+cor(normal_bivariada_independiente)
+voc(normal_bivariada_independiente)
+
+#Normal bivariada
+#ejemplo:
+#PESO:
+#ALTURA:
+#M = sumatorio = (10 [300])
+#                 ( 30, 20)
+#Normal bibariada
+#mu1- media primera columna
+#mu2 media segunda columnasigma1 varianza de 1
+#sigma de 2 la varianxa
+
+x<-rnorm(1000)
+y <-rexp(1000)
+
+cov(x,y)
+cov(y,x)
+
+#Ejemplo:
+
+library(MASS)
+n <- 100
+p<- 2
+
+mu1 <- 0
+mu2 <- 0
+mu3 <- 10
+mu4 <- 3
+mu5 <- 12
+
+
+sigma11<- 0.3
+sigma12<-
+sigma13<-
+sigma14<-
+  
+  
+#FUNCION EXPONENCIAL CUADRATICO
+#K(X,X')
+#ESOS DOS PARAMETROS NOS PERMETIRAN MODELAR LOS GAFICOS
+# A MEDIDA QUE NOS ALEJAMOS DE LA DIAGONAL TENEMOS DATOS MAS PEQUEÑOS
+#A MAS CERCA DE LA DIAGONAL MAYOR COVARIANZA, A MAS LEJOS MENOS COVARIANZA
+
+
+##COMO FUNCIONARIAN LOS DATOS PARA QUE SE SIMULEN PARA QUE NOS VENGA BIEN PARA NUESTRO MODELO.
+#MODELO DE REGRESION
+#se le suele sumar un error para que la relacion no sea determinisa
+#esta forma es mas dificilde controlar la correlacion ya que al ir cambiando datos se van cambiando los datos
+  
+#se puede ajustar un modelo a laparabola 
