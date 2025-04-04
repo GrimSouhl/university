@@ -1,0 +1,69 @@
+---
+title: "T3"
+format: html
+editor: visual
+---
+
+# TEMA 3
+
+¿Qué es la inferencia? ¿Cómo se distribuyen mis datos?
+
+## Concepto de población
+
+Los datos que desconocemos.\
+
+## Inferencia Estadística
+
+\-**Estimación puntual**: predecir el valor del parámetro
+
+**-Intervalos de confianza**
+
+\-**Test de hipótesis**
+
+## Conceptos de Muestra
+
+Información disponible para poder conocer nuestra población.\
+Nuestra muestra no es fija sino aleatoria (va cambiando).\
+Datos independientes e igualmente distribuidos.\
+Pese a que sea aleatoria dejamos una muestra fija.\
+
+## Concepto de Estadístico
+
+de cada muestra sacamos su estadístico, concepto: distribución estadística
+
+## Ejercicio
+
+Obtenga la distribución de x_rayita x_rayita = (sum(x) /n) donde x \~ exp(Landam=2) para un n= 5, 1000
+
+```{r}
+
+n<-5
+
+media<-numeric(1000)
+for(i in 1:1000)
+    distribucion <- rexp(n, 2)
+    media[i] <- mean(distribucion)
+
+media
+hist(media)
+
+
+n<-1000
+media2 <- seq(1:1000)
+for(i in 1:1000)
+    distribucion <- rexp(n, 2)
+    media2[i] <- mean(distribucion)
+
+media2
+hist(media2)
+
+
+```
+
+## Ejercicio Población
+
+```{r}
+
+barplot(table(poblacion$Digito)/nrow(poblacion))
+#table(poblacion$Digito)/nrow(poblacion)
+```
